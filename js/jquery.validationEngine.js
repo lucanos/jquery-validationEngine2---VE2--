@@ -106,184 +106,217 @@
 
 
   $.validationEngine = {
-    defaultSetting : function(caller) {		// NOT GENERALLY USED, NEEDED FOR THE API, DO NOT TOUCH
-      if($.validationEngineLanguage){
+  
+   // Not generally used, needed for the API, DO NOT TOUCH
+    defaultSetting : function( caller ){
+    
+      if( $.validationEngineLanguage ){
         allRules = $.validationEngineLanguage.allRules;
       }else{
-        $.validationEngine.debug("Validation engine rules are not loaded check your external file");
+        $.validationEngine.debug( "Validation engine rules are not loaded check your external file" );
       }
+      
       settings = {
-        allrules:allRules,
-        validationEventTriggers:"blur",
+        allrules: allRules,
+        validationEventTriggers: "blur",
         inlineValidation: true,
-        containerOverflow:false,
-        containerOverflowDOM:"",
-        returnIsValid:false,
-        scroll:true,
-        unbindEngine:true,
+        containerOverflow: false,
+        containerOverflowDOM: "",
+        returnIsValid: false,
+        scroll: true,
+        unbindEngine: true,
         ajaxSubmit: false,
-        promptPosition: "topRight",	// OPENNING BOX POSITION, IMPLEMENTED: topLeft, topRight, bottomLeft, centerRight, bottomRight
+        promptPosition: "topRight" ,	// Error Message Position. Options: topLeft, topRight, bottomLeft, centerRight, bottomRight
         success : false,
-        failure : function() {}
-      }
+        failure : function(){}
+      };
       $.validationEngine.settings = settings;
-    },
-    loadValidation : function(caller) {		// GET VALIDATIONS TO BE EXECUTED
-      if(!$.validationEngine.settings) $.validationEngine.defaultSetting()
-      rulesParsing = $(caller).attr('class');
+    } ,
+    
+   // Get Validation Rules to be Tested
+    loadValidation : function( caller ){
+      var $caller = $( caller );
+      
+      if( !$.validationEngine.settings )
+        $.validationEngine.defaultSetting();
+      rulesParsing = $caller.attr('class');
       rulesRegExp = /\[(.*)\]/;
-      getRules = rulesRegExp.exec(rulesParsing);
-      if(getRules == null) return false;
+      getRules = rulesRegExp.exec( rulesParsing );
+      if( getRules==null )
+        return false;
       str = getRules[1];
       pattern = /\[|,|\]/;
-      result= str.split(pattern);
-      var validateCalll = $.validationEngine.validateCall(caller,result)
-      return validateCalll;
-    },
-    validateCall : function(caller,rules) {	// EXECUTE VALIDATION REQUIRED BY THE USER FOR THIS FIELD
-      var promptText =""
-
-      if(!$(caller).attr("id"))
-        $(caller).attr("id","validationEngine_"+(new Date).getTime()+(Math.random()+'').replace('0.',''));
-
-      caller = caller;
+      result= str.split( pattern );
+      return $.validationEngine.validateCall( caller , result );
+    } ,
+    
+   // Execute Validation for This Field
+    validateCall : function( caller , rules ){
+      var promptText = "";
+      var $caller = $( caller );
       ajaxValidate = false;
-      var callerName = $(caller).attr("name");
       $.validationEngine.isError = false;
       $.validationEngine.showTriangle = true;
-      callerType = $(caller).attr("type");
+      var callerName = $caller.attr( "name" );
+      callerType = $caller.attr( "type" );
+      
+     // If there is No ID attached to this field, create a new, hopefully unique, one.
+      if( !$caller.attr( "id" ) )
+        $caller.attr( "id" , "validationEngine_"+( new Date ).getTime()+( Math.random()+'' ).replace( '0.' , '' ) );
 
-      for (i=0; i<rules.length;i++){
-        switch (rules[i]){
-        case "optional":
-          if(!$(caller).val()){
-            $.validationEngine.closePrompt(caller);
-            return $.validationEngine.isError;
-          }
-        break;
-        case "required":
-          _required(caller,rules);
-        break;
-        case "custom":
-           _customRegex(caller,rules,i);
-        break;
-        case "exemptString":
-           _exemptString(caller,rules,i);
-        break;
-        case "ajax":
-          if(!$.validationEngine.onSubmitValid) _ajax(caller,rules,i);
-        break;
-        case "length":
-           _length(caller,rules,i);
-        break;
-        case "maxCheckbox":
-          _maxCheckbox(caller,rules,i);
-          groupname = $(caller).attr("name");
-          caller = $("input[name='"+groupname+"']");
-        break;
-        case "minCheckbox":
-          _minCheckbox(caller,rules,i);
-          groupname = $(caller).attr("name");
-          caller = $("input[name='"+groupname+"']");
-        break;
-        case "confirm":
-           _confirm(caller,rules,i);
-        break;
-        case "funcCall":
-            _funcCall(caller,rules,i);
-        break;
-        default :;
-        };
-      };
+      for( i=0 ; i<rules.length ; i++ ){
+        switch( rules[i] ){
+          case "optional" :
+            if( !$caller.val() ){
+              $.validationEngine.closePrompt( caller );
+              return $.validationEngine.isError;
+            }
+            break;
+          case "required":
+            _required( caller , rules );
+            break;
+          case "custom" :
+             _customRegex( caller , rules , i );
+            break;
+          case "exemptString" :
+             _exemptString( caller , rules , i );
+            break;
+          case "ajax" :
+            if( !$.validationEngine.onSubmitValid )
+              _ajax( caller , rules , i );
+            break;
+          case "length" :
+             _length( caller , rules , i );
+            break;
+          case "maxCheckbox" :
+            _maxCheckbox( caller , rules , i );
+            caller = $( "input[name='"+callerName+"']" );
+          break;
+          case "minCheckbox":
+            _minCheckbox( caller , rules , i );
+            caller = $( "input[name='"+callerName+"']" );
+          break;
+          case "confirm" :
+             _confirm( caller , rules , i );
+            break;
+          case "funcCall" :
+              _funcCall( caller , rules , i );
+            break;
+          default :;
+        }
+      }
+      
       radioHack();
-      if ($.validationEngine.isError == true){
-        var linkTofieldText = "." +$.validationEngine.linkTofield(caller);
-        if(linkTofieldText != "."){
-          if(!$(linkTofieldText)[0]){
-            $.validationEngine.buildPrompt(caller,promptText,"error")
-          }else{
-            $.validationEngine.updatePromptText(caller,promptText);
-          }
+      
+      if( $.validationEngine.isError==true ){
+        var linkTofieldText = "." +$.validationEngine.linkTofield( caller );
+        if( linkTofieldText=="." ){
+          $.validationEngine.updatePromptText( caller , promptText );
+        }else if( !$( linkTofieldText )[0] ){
+          $.validationEngine.buildPrompt( caller , promptText , "error" );
         }else{
-          $.validationEngine.updatePromptText(caller,promptText);
+          $.validationEngine.updatePromptText( caller , promptText );
         }
       }else{
-        $.validationEngine.closePrompt(caller);
+        $.validationEngine.closePrompt( caller );
       }
-      /* UNFORTUNATE RADIO AND CHECKBOX GROUP HACKS */
-      /* As my validation is looping input with id's we need a hack for my validation to understand to group these inputs */
+      
+     /* UNFORTUNATE RADIO AND CHECKBOX GROUP HACKS */
+     /* As my validation is looping input with id's we need a hack for my validation to understand to group these inputs */
       function radioHack(){
-          if($("input[name='"+callerName+"']").size()> 1 && (callerType == "radio" || callerType == "checkbox")) {        // Hack for radio/checkbox group button, the validation go the first radio/checkbox of the group
-              caller = $("input[name='"+callerName+"'][type!=hidden]:first");
-              $.validationEngine.showTriangle = false;
-          }
-        }
-      /* VALIDATION FUNCTIONS */
-      function _required(caller,rules){   // VALIDATE BLANK FIELD
-        callerType = $(caller).attr("type");
-        if (callerType == "text" || callerType == "password" || callerType == "textarea"){
-
-          if(!$(caller).val()){
-            $.validationEngine.isError = true;
-            promptText += $.validationEngine.settings.allrules[rules[i]].alertText+"<br />";
-          }
-        }
-        if (callerType == "radio" || callerType == "checkbox" ){
-          callerName = $(caller).attr("name");
-
-          if($("input[name='"+callerName+"']:checked").size() == 0) {
-            $.validationEngine.isError = true;
-            if($("input[name='"+callerName+"']").size() ==1) {
-              promptText += $.validationEngine.settings.allrules[rules[i]].alertTextCheckboxe+"<br />";
-            }else{
-               promptText += $.validationEngine.settings.allrules[rules[i]].alertTextCheckboxMultiple+"<br />";
-            }
-          }
-        }
-        if (callerType == "select-one") { // added by paul@kinetek.net for select boxes, Thank you
-          if(!$(caller).val()) {
-            $.validationEngine.isError = true;
-            promptText += $.validationEngine.settings.allrules[rules[i]].alertText+"<br />";
-          }
-        }
-        if (callerType == "select-multiple") { // added by paul@kinetek.net for select boxes, Thank you
-          if(!$(caller).find("option:selected").val()) {
-            $.validationEngine.isError = true;
-            promptText += $.validationEngine.settings.allrules[rules[i]].alertText+"<br />";
-          }
+       // Hack for radio/checkbox group button, the validation go the first radio/checkbox of the group
+        if( $( "input[name='"+callerName+"']" ).size()>1
+          && ( callerType=="radio"
+               || callerType=="checkbox" ) ){
+          caller = $( "input[name='"+callerName+"'][type!=hidden]:first" );
+          $.validationEngine.showTriangle = false;
         }
       }
-      function _customRegex(caller,rules,position){		 // VALIDATE REGEX RULES
-        customRule = rules[position+1];
-        pattern = eval($.validationEngine.settings.allrules[customRule].regex);
+      
+     /* VALIDATION FUNCTIONS */
+     
+     // VALIDATE BLANK FIELD
+      function _required( caller , rules ){
+        $caller = $( caller );
+        callerType = $caller.attr( "type" );
+        
+        switch( callerType ){
+          case "text" :
+          case "password" :
+          case "textarea" :
+            if( !$caller.val() ){
+              $.validationEngine.isError = true;
+              promptText += $.validationEngine.settings.allrules[rules[i]].alertText+"<br />";
+            }
+            break;
+          case "radio" :
+          case "checkbox" :
+            callerName = $caller.attr( "name" );
 
-        if(!pattern.test($(caller).attr('value'))){
+            if( $( "input[name='"+callerName+"']:checked" ).size()==0 ){
+              $.validationEngine.isError = true;
+              if( $( "input[name='"+callerName+"']" ).size()==1 ){
+                promptText += $.validationEngine.settings.allrules[rules[i]].alertTextCheckboxe+"<br />";
+              }else{
+                promptText += $.validationEngine.settings.allrules[rules[i]].alertTextCheckboxMultiple+"<br />";
+              }
+            }
+            break;
+          case "select-one" :
+           // added by paul@kinetek.net for select boxes, Thank you
+            if( !$caller.val() ){
+              $.validationEngine.isError = true;
+              promptText += $.validationEngine.settings.allrules[rules[i]].alertText+"<br />";
+            }
+            break;
+          case "select-multiple" :
+           // added by paul@kinetek.net for select boxes, Thank you
+            if( !$caller.find( "option:selected" ).val() ) {
+              $.validationEngine.isError = true;
+              promptText += $.validationEngine.settings.allrules[rules[i]].alertText+"<br />";
+            }
+            break;
+        }
+      }
+      
+     // Validate Regular Expression Rules
+      function _customRegex( caller , rules , position ){
+        $caller = $( caller );
+        customRule = rules[position+1];
+        pattern = eval( $.validationEngine.settings.allrules[customRule].regex );
+
+        if( !pattern.test( $caller.val() ) ){
           $.validationEngine.isError = true;
           promptText += $.validationEngine.settings.allrules[customRule].alertText+"<br />";
         }
       }
-      function _exemptString(caller,rules,position){		 // VALIDATE REGEX RULES
+      
+     // Validate "exemptString" Rules
+     // TODO: Explain this better
+      function _exemptString( caller , rules , position ){
+        $caller = $( caller );
         customString = rules[position+1];
-        if(customString == $(caller).attr('value')){
+        
+        if( customString==$caller.val() ){
           $.validationEngine.isError = true;
+         // TODO: Check whether this should be using the "required" alertText
           promptText += $.validationEngine.settings.allrules['required'].alertText+"<br />";
         }
       }
 
-      function _funcCall(caller,rules,position){  		// VALIDATE CUSTOM FUNCTIONS OUTSIDE OF THE ENGINE SCOPE
+     // Validate by calling Function outside of the Engine
+      function _funcCall( caller , rules , position ){
         customRule = rules[position+1];
-        funce = $.validationEngine.settings.allrules[customRule].nname;
-
-        var fn = window[funce];
-        if (typeof(fn) === 'function'){
+        var fn = window[ $.validationEngine.settings.allrules[customRule].nname ];
+        
+        if( typeof( fn )==='function' ){
           var fn_result = fn();
-          if(!fn_result){
+          if( !fn_result )
             $.validationEngine.isError = true;
-          }
-
           promptText += $.validationEngine.settings.allrules[customRule].alertText+"<br />";
         }
       }
+
       function _ajax(caller,rules,position){				 // VALIDATE AJAX RULES
 
         customAjaxRule = rules[position+1];
