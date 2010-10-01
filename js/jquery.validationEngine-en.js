@@ -11,9 +11,9 @@
 						"alertTextCheckboxe":"* This checkbox is required"},
 					"length":{
 						"regex":"none",
-						"alertText":"* Between ",
-						"alertText2":" and ",
-						"alertText3": " characters allowed"},
+						"alertText":"* Between",
+						"alertText2":"and",
+						"alertText3": "characters allowed"},
 					"maxCheckbox":{
 						"regex":"none",
 						"alertText":"* Checks allowed Exceeded"},	
