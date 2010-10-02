@@ -453,47 +453,57 @@
     } ,
 
     submitForm : function( caller ){
+      $caller = $( caller );
 
       if( $.validationEngine.settings.ajaxSubmit ){
-        if($.validationEngine.settings.ajaxSubmitExtraData){
+
+        if( $.validationEngine.settings.ajaxSubmitExtraData ){
           extraData = $.validationEngine.settings.ajaxSubmitExtraData;
         }else{
-          extraData = "";
+          extraData = '';
         }
+
         $.ajax({
-            type: "POST",
-            url: $.validationEngine.settings.ajaxSubmitFile,
-            async: true,
-            data: $(caller).serialize()+"&"+extraData,
-            error: function(data,transport){ $.validationEngine.debug("error in the ajax: "+data.status+" "+transport) },
-            success: function(data){
-              if(data == "true"){			// EVERYTING IS FINE, SHOW SUCCESS MESSAGE
-                $(caller).css("opacity",1)
-                $(caller).animate({opacity: 0, height: 0}, function(){
-                  $(caller).css("display","none");
-                  $(caller).before("<div class='ajaxSubmit'>"+$.validationEngine.settings.ajaxSubmitMessage+"</div>");
-                  $.validationEngine.closePrompt(".formError",true);
-                  $(".ajaxSubmit").show("slow");
-                  if ($.validationEngine.settings.success){	// AJAX SUCCESS, STOP THE LOCATION UPDATE
-                  $.validationEngine.settings.success && $.validationEngine.settings.success();
-                  return false;
-                }
-                })
-              }else{						// HOUSTON WE GOT A PROBLEM (SOMETING IS NOT VALIDATING)
-                data = eval( "("+data+")");
-                if(!data.jsonValidateReturn){
-                   $.validationEngine.debug("you are not going into the success fonction and jsonValidateReturn return nothing");
-                }
-                errorNumber = data.jsonValidateReturn.length
-                for(index=0; index<errorNumber; index++){
-                  fieldId = data.jsonValidateReturn[index][0];
-                  promptError = data.jsonValidateReturn[index][1];
-                  type = data.jsonValidateReturn[index][2];
-                  $.validationEngine.buildPrompt(fieldId,promptError,type);
-                }
+          type: 'POST' ,
+          url: $.validationEngine.settings.ajaxSubmitFile ,
+          async: true ,
+          data: $caller.serialize()+"&"+extraData ,
+          error: function( data , transport ){
+            $.validationEngine.debug( 'Error in the AJAX [submitForm()]: '+data.status+' '+transport );
+          } ,
+          success: function( data ){
+            if( data=='true' ){
+             // All is well, Show Success Message
+              $caller
+                .css( 'opacity' , 1 )
+                .animate( { opacity : 0 , height : 0 } , function(){
+                  $( this )
+                    .hide()
+                    .before( '<div class="ajaxSubmit">'+$.validationEngine.settings.ajaxSubmitMessage+'</div>' );
+                  $.validationEngine.closePrompt( '.formError' , true );
+                  $( '.ajaxSubmit' ).show( 'slow' );
+                  if( $.validationEngine.settings.success ){
+                   // AJAX success, stop the Location Update
+                    $.validationEngine.settings.success && $.validationEngine.settings.success();
+                    return false;
+                  }
+                } );
+            }else{
+             // Houston, we got a problem. Something is not validating.
+              data = eval( "("+data+")" );
+              if( !data.jsonValidateReturn )
+                $.validationEngine.debug( "you are not going into the success function and jsonValidateReturn return nothing" );
+              errorNumber = data.jsonValidateReturn.length
+              for( index=0 ; index<errorNumber ; index++ ){
+                fieldId = data.jsonValidateReturn[index][0];
+                promptError = data.jsonValidateReturn[index][1];
+                type = data.jsonValidateReturn[index][2];
+                $.validationEngine.buildPrompt(fieldId,promptError,type);
               }
             }
-        });
+          }
+        } );
+
         return true;
       }
 
@@ -502,12 +512,13 @@
        // AJAX Success - Stop the Location Update
         if( $.validationEngine.settings.success ){
           if( $.validationEngine.settings.unbindEngine )
-            $( caller ).unbind( "submit" );
+            $caller.unbind( 'submit' );
           $.validationEngine.settings.success && $.validationEngine.settings.success();
           return true;
         }
         return false;
       }
+
       return true;
     } ,
 
@@ -518,7 +529,7 @@
 
       if( !$.validationEngine.settings )
         $.validationEngine.defaultSetting();
-      $deleteItself = $( "."+$caller.attr( "id" )+"formError" );
+      $deleteItself = $( '.'+$caller.attr( 'id' )+'formError' );
       if( $deleteItself.length ){
         $deleteItself
           .stop()
@@ -534,36 +545,31 @@
       if( $.validationEngine.settings.containerOverflow ){
         $( caller ).before( $divFormError );
       }else{
-        $( "body" ).append( $divFormError );
+        $( 'body' ).append( $divFormError );
       }
 
-      var $formErrorContent = $( '<div class="formErrorContent"></div>' );
+      var $formErrorContent = $( '<div class="formErrorContent"></div>' )
+        .html( promptText );
       $divFormError
-        .append($formErrorContent);
+        .append( $formErrorContent );
 
-      if($.validationEngine.showTriangle != false){		// NO TRIANGLE ON MAX CHECKBOX AND RADIO
+      if( $.validationEngine.showTriangle!=false ){		// NO TRIANGLE ON MAX CHECKBOX AND RADIO
         var $arrow = $( '<div class="formErrorArrow"></div>' );
         $divFormError.append( $arrow );
+        var arrowHTML = '';
         if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) ){
           $arrow
             .addClass( "formErrorArrowBottom" )
-            .html( '<div class="line1"><!-- --></div><div class="line2"><!-- --></div>'+
-                   '<div class="line3"><!-- --></div><div class="line4"><!-- --></div>'+
-                   '<div class="line5"><!-- --></div><div class="line6"><!-- --></div>'+
-                   '<div class="line7"><!-- --></div><div class="line8"><!-- --></div>'+
-                   '<div class="line9"><!-- --></div><div class="line10"><!-- --></div>' );
+          for( l=1 ; l<11 ; l++ )
+            arrowHTML += '<div class="line'+l+'"><!-- --></div>';
         }
         if( /^top(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) ){
-          $divFormError.append( $arrow );
-          $arrow.html( '<div class="line10"><!-- --></div><div class="line9"><!-- --></div>'+
-                       '<div class="line8"><!-- --></div><div class="line7"><!-- --></div>'+
-                       '<div class="line6"><!-- --></div><div class="line5"><!-- --></div>'+
-                       '<div class="line4"><!-- --></div><div class="line3"><!-- --></div>'+
-                       '<div class="line2"><!-- --></div><div class="line1"><!-- --></div>' );
+          for( l=10 ; l>0 ; l-- )
+            arrowHTML += '<div class="line'+l+'"><!-- --></div>';
         }
+        $arrow
+          .html( arrowHTML );
       }
-
-      $formErrorContent.html( promptText );
 
       var calculatedPosition = $.validationEngine.calculatePosition( caller , promptText , type , ajaxed , $divFormError );
 
@@ -595,7 +601,7 @@
 
       calculatedPosition.callerTopPosition += "px";
       calculatedPosition.callerleftPosition += "px";
-      calculatedPosition.marginTopSize += "px"
+      calculatedPosition.marginTopSize += "px";
       $updateThisPrompt.animate( {
         "top": calculatedPosition.callerTopPosition ,
         "marginTop": calculatedPosition.marginTopSize
@@ -658,7 +664,7 @@
       if( !$.validationEngine.settings )
         $.validationEngine.defaultSetting();
       if( outside ){
-        $( caller ).fadeTo( "fast" , 0 , function(){
+        $( caller ).fadeOut( "fast" , function(){
           $( this ).remove();
         } );
         return false;
@@ -667,7 +673,7 @@
         ajaxValidate = false;
       if( !ajaxValidate ){
         linkTofield = $.validationEngine.linkTofield( caller );
-        $( "."+linkTofield ).fadeTo( "fast" , 0 , function(){
+        $( "."+linkTofield ).fadeOut( "fast" , function(){
           $( this ).remove();
         } );
       }
@@ -685,11 +691,10 @@
       var $caller = $( caller );
       var stopForm = false;
       $.validationEngine.ajaxValid = true;
-      var toValidateSize = $caller.find("[class*=validate]").size();
 
-      $caller.find("[class*=validate]").each( function(){
+      $caller.find( '[class*="validate["]' ).each( function(){
         linkTofield = $.validationEngine.linkTofield( this );
-        if( !$( "."+linkTofield ).hasClass( "ajaxed" ) ){
+        if( !$( "."+linkTofield+".ajaxed" ) ){
          // DO NOT UPDATE ALREADY AJAXED FIELDS (only happen if no normal errors, don't worry)
           var validationPass = $.validationEngine.loadValidation( this );
           return ( validationPass ? stopForm = true : "" );
@@ -716,10 +721,11 @@
             var destination = $( ".formError:not('.greenPopup'):first" ).offset().top;
             var scrollContainerScroll = $( $.validationEngine.settings.containerOverflowDOM ).scrollTop();
             var scrollContainerPos = - parseInt( $( $.validationEngine.settings.containerOverflowDOM ).offset().top );
-            var destination = scrollContainerScroll + destination + scrollContainerPos -5
-            var scrollContainer = $.validationEngine.settings.containerOverflowDOM+":not(:animated)"
+            var destination = scrollContainerScroll + destination + scrollContainerPos -5;
+            var scrollContainer = $.validationEngine.settings.containerOverflowDOM+":not(:animated)";
 
-            $( scrollContainer ).animate( { scrollTop : destination } , 1100 );
+            $( scrollContainer )
+              .animate( { scrollTop : destination } , 1100 );
           }
         }
         return true;
