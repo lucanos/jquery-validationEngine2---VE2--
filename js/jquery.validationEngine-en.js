@@ -38,7 +38,7 @@
 						"alertText":"* Numbers only"},	
 					"noSpecialCaracters":{
 						"regex":"/^[0-9a-zA-Z]+$/",
-						"alertText":"* No special caracters allowed"},	
+						"alertText":"* No special characters allowed"},	
 					"ajaxUser":{
 						"file":"validateUser.php",
 						"extraData":"name=eric",
