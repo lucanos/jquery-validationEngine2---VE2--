@@ -327,43 +327,46 @@
         ajaxValidate = true;
         ajaxisError = $.validationEngine.isError;
 
-        if($.validationEngine.settings.allrules[customAjaxRule].extraData){
-          extraData = $.validationEngine.settings.allrules[customAjaxRule].extraData;
-        }else{
-          extraData = "";
-        }
-        /* AJAX VALIDATION HAS ITS OWN UPDATE AND BUILD UNLIKE OTHER RULES */
+        extraData = $.validationEngine.settings.allrules[customAjaxRule].extraData || '';
+        
+       /* AJAX VALIDATION HAS ITS OWN UPDATE AND BUILD UNLIKE OTHER RULES */
         if(!ajaxisError){
           $.ajax({
-              type: "POST",
-              url: postfile,
-              async: true,
-              data: "validateValue="+fieldValue+"&validateId="+fieldId+"&validateError="+customAjaxRule+"&extraData="+extraData,
-              beforeSend: function(){		// BUILD A LOADING PROMPT IF LOAD TEXT EXIST
-                if($.validationEngine.settings.allrules[customAjaxRule].alertTextLoad){
-
-                  if(!$("div."+fieldId+"formError")[0]){
-                  return $.validationEngine.buildPrompt(ajaxCaller,$.validationEngine.settings.allrules[customAjaxRule].alertTextLoad,"load");
+            type: 'POST' ,
+            url: postfile ,
+            async: true ,
+            data: 'validateValue='+fieldValue+'&validateId='+fieldId+'&validateError='+customAjaxRule+'&extraData='+extraData ,
+            beforeSend: function(){
+             // BUILD A LOADING PROMPT IF LOAD TEXT EXIST
+              if( $.validationEngine.settings.allrules[customAjaxRule].alertTextLoad ){
+                if( !$( 'div.'+fieldId+'formError' )[0] ){
+                  return $.validationEngine.buildPrompt( ajaxCaller , $.validationEngine.settings.allrules[customAjaxRule].alertTextLoad , 'load' );
                 }else{
-                  $.validationEngine.updatePromptText(ajaxCaller,$.validationEngine.settings.allrules[customAjaxRule].alertTextLoad,"load");
+                  $.validationEngine.updatePromptText( ajaxCaller , $.validationEngine.settings.allrules[customAjaxRule].alertTextLoad , 'load' );
                 }
-                }
-              },
-              error: function(data,transport){ $.validationEngine.debug("error in the ajax: "+data.status+" "+transport) },
-            success: function(data){					// GET SUCCESS DATA RETURN JSON
-              data = eval( "("+data+")");				// GET JSON DATA FROM PHP AND PARSE IT
+              }
+            } ,
+            error: function( data , transport ){
+              $.validationEngine.debug( 'Error in the AJAX [_ajax()]: '+data.status+' '+transport );
+            } ,
+            success: function( data ){
+             // GET SUCCESS DATA RETURN JSON
+             // GET JSON DATA FROM PHP AND PARSE IT
+              data = eval( "("+data+")" );
               ajaxisError = data.jsonValidateReturn[2];
               customAjaxRule = data.jsonValidateReturn[1];
-              ajaxCaller = $("#"+data.jsonValidateReturn[0])[0];
+              ajaxCaller = $( '#'+data.jsonValidateReturn[0] )[0];
               fieldId = ajaxCaller;
               ajaxErrorLength = $.validationEngine.ajaxValidArray.length;
               existInarray = false;
 
-               if(ajaxisError == "false"){			// DATA FALSE UPDATE PROMPT WITH ERROR;
+              if( ajaxisError=='false' ){
+               // DATA FALSE UPDATE PROMPT WITH ERROR
+               // Check if ajax validation already used on this field
+                _setInArray( false );
 
-                _setInArray(false)				// Check if ajax validation alreay used on this field
-
-                if(!existInarray){		 			// Add ajax error to stop submit
+                if( !existInarray ){
+                 // Add ajax error to stop submit
                   $.validationEngine.ajaxValidArray[ajaxErrorLength] =  new Array(2);
                   $.validationEngine.ajaxValidArray[ajaxErrorLength][0] = fieldId;
                   $.validationEngine.ajaxValidArray[ajaxErrorLength][1] = false;
@@ -371,28 +374,34 @@
                 }
 
                 $.validationEngine.ajaxValid = false;
-                promptText += $.validationEngine.settings.allrules[customAjaxRule].alertText+"<br />";
-                $.validationEngine.updatePromptText(ajaxCaller,promptText,"",true);
-               }else{
-                _setInArray(true);
+                promptText += $.validationEngine.settings.allrules[customAjaxRule].alertText+'<br />';
+                $.validationEngine.updatePromptText( ajaxCaller , promptText , '' , true );
+
+              }else{
+
+                _setInArray( true );
                 $.validationEngine.ajaxValid = true;
-                if(!customAjaxRule)	{$.validationEngine.debug("wrong ajax response, are you on a server or in xampp? if not delete de ajax[ajaxUser] validating rule from your form ")}
-                if($.validationEngine.settings.allrules[customAjaxRule].alertTextOk){	// NO OK TEXT MEAN CLOSE PROMPT
-                          $.validationEngine.updatePromptText(ajaxCaller,$.validationEngine.settings.allrules[customAjaxRule].alertTextOk,"pass",true);
+                if( !customAjaxRule )
+                  $.validationEngine.debug( "wrong ajax response, are you on a server or in xampp? if not delete de ajax[ajaxUser] validating rule from your form " );
+                if( $.validationEngine.settings.allrules[customAjaxRule].alertTextOk ){
+                 // OK Text exists - Display It
+                  $.validationEngine.updatePromptText( ajaxCaller , $.validationEngine.settings.allrules[customAjaxRule].alertTextOk , 'pass' , true );
                 }else{
                   ajaxValidate = false;
-                  $.validationEngine.closePrompt(ajaxCaller);
+                  $.validationEngine.closePrompt( ajaxCaller );
                 }
-               }
-              function  _setInArray(validate){
-                for(x=0;x<ajaxErrorLength;x++){
-                  if($.validationEngine.ajaxValidArray[x][0] == fieldId){
+
+              }
+
+              function  _setInArray( validate ){
+                for( x=0 ; x<ajaxErrorLength ; x++ ){
+                  if( $.validationEngine.ajaxValidArray[x][0]==fieldId ){
                     $.validationEngine.ajaxValidArray[x][1] = validate;
                     existInarray = true;
-
                   }
                 }
               }
+
             }
           });
         }
