@@ -677,7 +677,7 @@
       if( $( "#debugMode" ).length==0 )
         $( "body" )
           .append( "<div id='debugMode'><div class='debugError'><strong>This is a debug mode, you got a problem with your form, it will try to help you, refresh when you think you nailed down the problem</strong></div></div>" );
-      $( "#debugMode .debugError" ).append( "<div class='debugerror'>"+error+"</div>" );
+      $( "#debugMode .debugError" ).append( "<div class='debugError'>"+error+"</div>" );
     } ,
 
    // FORM SUBMIT VALIDATION LOOPING INLINE VALIDATION
