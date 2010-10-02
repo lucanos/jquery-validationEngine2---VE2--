@@ -31,8 +31,8 @@
 						"regex":"/^[a-zA-Z0-9_\.\-]+\@([a-zA-Z0-9\-]+\.)+[a-zA-Z0-9]{2,4}$/",
 						"alertText":"* Invalid email address"},	
 					"date":{
-                         "regex":"/^[0-9]{4}\-\[0-9]{1,2}\-\[0-9]{1,2}$/",
-                         "alertText":"* Invalid date, must be in YYYY-MM-DD format"},
+            "regex":"/^(?:[012]?[0-9]|3[01])[\/\-](?:0?[0-9]|1[0-2])[\/\-](?:[12][0-9]{3})$/",
+            "alertText":"* Invalid date, must be in DD/MM/YYYY format"},
 					"onlyNumber":{
 						"regex":"/^[0-9\ ]+$/",
 						"alertText":"* Numbers only"},	
