@@ -8,7 +8,7 @@
 						"regex":"none",
 						"alertText":"* This field is required",
 						"alertTextCheckboxMultiple":"* Please select an option",
-						"alertTextCheckboxe":"* This checkbox is required"},
+						"alertTextCheckboxSingle":"* This checkbox is required"},
 					"length":{
 						"regex":"none",
 						"alertText":"* Between",
@@ -23,7 +23,7 @@
 						"alertText2":" options"},	
 					"confirm":{
 						"regex":"none",
-						"alertText":"* Your field is not matching"},		
+						"alertText":"* Your fields do not match"},		
 					"telephone":{
 						"regex":"/^[0-9\-\(\)\ ]+$/",
 						"alertText":"* Invalid phone number"},	
@@ -36,7 +36,7 @@
 					"onlyNumber":{
 						"regex":"/^[0-9\ ]+$/",
 						"alertText":"* Numbers only"},	
-					"noSpecialCaracters":{
+					"noSpecialCharacters":{
 						"regex":"/^[0-9a-zA-Z]+$/",
 						"alertText":"* No special characters allowed"},	
 					"ajaxUser":{

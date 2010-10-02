@@ -21,14 +21,7 @@
 -->
 <script>
 $( document ).ready( function() {
-  // SUCCESS AJAX CALL, replace "success: false," by:     success : function() { callSuccessFunction() },
-
   $("#formID").validationEngine();
-
-  //$.validationEngine.loadValidation("#date")
-  //alert($("#formID").validationEngine({returnIsValid:true}))
-  //$.validationEngine.buildPrompt("#date","This is an example","error")	 		 // Exterior prompt build example								 // input prompt close example
-  //$.validationEngine.closePrompt(".formError",true) 							// CLOSE ALL OPEN PROMPTS
 });
 
 // JUST AN EXAMPLE OF VALIDATIN CUSTOM FUNCTIONS : funcCall[validate2fields]
@@ -39,15 +32,12 @@ function validate2fields(){
 </head>
 
 <body>
-  <p>
-    <a href="#" onclick="alert($('#formID').validationEngine({returnIsValid:true}))">Return true or false without binding anything</a>
-    |
-    <a href="#" onclick="$.validationEngine.buildPrompt('#formID','This is an example','error')">Build a prompt on a div</a>
-    |
-    <a href="#" onclick="$.validationEngine.loadValidation('#date')">Load validation date</a>
-    |
-    <a href="#" onclick="$.validationEngine.closePrompt('.formError',true)">Close all prompt</a>
-  </p>
+  <ul id="testEvents">
+    <li><a href="javascript:alert($('#formID').validationEngine({returnIsValid:true}))">Return true or false without binding anything</a></li>
+    <li><a href="javascript:$.validationEngine.buildPrompt('#formID','This is an example','error')">Build a prompt on a div</a></li>
+    <li><a href="javascript:$.validationEngine.loadValidation('#date')">Load validation date</a></li>
+    <li><a href="javascript:$.validationEngine.closePrompt('.formError',true)">Close all prompt</a></li>
+  </ul>
   <form id="formID" class="formular" method="post" action="">
     <fieldset>
       <legend>User informations</legend>

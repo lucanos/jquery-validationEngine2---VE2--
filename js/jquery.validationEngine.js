@@ -256,7 +256,7 @@
             if( $( "input[name='"+callerName+"']:checked" ).size()==0 ){
               $.validationEngine.isError = true;
               if( $( "input[name='"+callerName+"']" ).size()==1 ){
-                promptText += $.validationEngine.settings.allrules[rules[i]].alertTextCheckboxe+"<br />";
+                promptText += $.validationEngine.settings.allrules[rules[i]].alertTextCheckboxSingle+"<br />";
               }else{
                 promptText += $.validationEngine.settings.allrules[rules[i]].alertTextCheckboxMultiple+"<br />";
               }

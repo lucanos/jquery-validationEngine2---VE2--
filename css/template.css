@@ -7,8 +7,9 @@ form.formular {
 	font-size: 12px;
 	padding: 20px;
 	border: 1px solid #A5A8B8;
-	width:300px;
-	margin-left:300px;
+	width: 300px;
+	margin-left: 300px;
+  clear: both;
 }
 
 .formular fieldset {
@@ -93,4 +94,29 @@ form.formular {
 	font-size: 12px;
 	margin-bottom: 15px;
 	background: #FFEAEA;
+}
+
+#testEvents {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+  float: left;
+}
+#testEvents li {
+  padding: 0;
+  margin: 0;
+  float: left;
+}
+#testEvents a {
+  display:block;
+  padding:1px 4px;
+  background-color: #CCC;
+  border: 1px solid #AAA;
+  color: #000;
+  text-decoration: none;
+  margin-right: 3px;
+}
+#testEvents a:hover {
+  color:#EEE;
+  background-color:#666;
 }
