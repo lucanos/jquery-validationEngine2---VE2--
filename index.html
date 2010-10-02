@@ -33,10 +33,10 @@ function validate2fields(){
 
 <body>
   <ul id="testEvents">
-    <li><a href="javascript:alert($('#formID').validationEngine({returnIsValid:true}))">Return true or false without binding anything</a></li>
-    <li><a href="javascript:$.validationEngine.buildPrompt('#formID','This is an example','error')">Build a prompt on a div</a></li>
-    <li><a href="javascript:$.validationEngine.loadValidation('#date')">Load validation date</a></li>
-    <li><a href="javascript:$.validationEngine.closePrompt('.formError',true)">Close all prompt</a></li>
+    <li><a href="javascript:void(alert($('#formID').validationEngine({returnIsValid:true})));">Return true or false without binding anything</a></li>
+    <li><a href="javascript:void($.validationEngine.buildPrompt('#formID','This is an example','error'));">Build a prompt on a div</a></li>
+    <li><a href="javascript:void($.validationEngine.loadValidation('#date'));">Load validation date</a></li>
+    <li><a href="javascript:void($.validationEngine.closePrompt('.formError',true));">Close all prompt</a></li>
   </ul>
   <form id="formID" class="formular" method="post" action="">
     <fieldset>
