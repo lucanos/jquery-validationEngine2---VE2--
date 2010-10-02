@@ -18,21 +18,21 @@
     if( $.validationEngineLanguage ){
       allRules = $.validationEngineLanguage.allRules;
     }else{
-      $.validationEngine.debug( "Validation engine rules are not loaded check your external file" );
+      $.validationEngine.debug( 'Validation engine rules are not loaded check your external file' );
     }
 
     settings = jQuery.extend( {
       allrules: allRules ,
-      validationEventTriggers: "focusout" ,
+      validationEventTriggers: 'focusout' ,
       inlineValidation: true ,
       returnIsValid: false ,
       liveEvent: true ,
       unbindEngine: true ,
       containerOverflow: false ,
-      containerOverflowDOM: "" ,
+      containerOverflowDOM: '' ,
       ajaxSubmit: false ,
       scroll: true ,
-      promptPosition: "topRight" ,	// Error Message Position. Options: topLeft, topRight, bottomLeft, centerRight, bottomRight
+      promptPosition: 'topRight' ,	// Error Message Position. Options: topLeft, topRight, bottomLeft, centerRight, bottomRight
       success: false ,
       beforeSuccess:  function(){} ,
       failure: function(){}
@@ -46,20 +46,28 @@
     if( settings.inlineValidation==true ){
 
      // NEEDED FOR THE SETTING returnIsValid
-      if(!settings.returnIsValid ){
+      if( !settings.returnIsValid ){
         allowReturnIsvalid = false;
         $this = $(this);
        // LIVE event, vast performance improvement over BIND
         if( settings.liveEvent ){
           $this.find( "[class*=validate][type!=checkbox]" )
-            .live( settings.validationEventTriggers , function( caller ){ _inlinEvent( this ); } );
+            .live( settings.validationEventTriggers , function( caller ){
+              _inlinEvent( this );
+            } );
           $this.find( "[class*=validate][type=checkbox]" )
-            .live( "click" , function( caller ){ _inlinEvent( this ); } );
+            .live( "click" , function( caller ){
+              _inlinEvent( this );
+            } );
         }else{
           $this.find( "[class*=validate]" ).not( "[type=checkbox]" )
-            .bind( settings.validationEventTriggers , function( caller ){ _inlinEvent( this ); } );
+            .bind( settings.validationEventTriggers , function( caller ){
+              _inlinEvent( this );
+            } );
           $this.find( "[class*=validate][type=checkbox]" )
-            .bind( "click" , function( caller ){ _inlinEvent( this ); } );
+            .bind( "click" , function( caller ){
+              _inlinEvent( this );
+            } );
         }
         firstvalid = false;
       }
@@ -83,7 +91,7 @@
       return !$.validationEngine.submitValidation( this , settings );
 
    // On FORM Submit, Control AJAX function if specified on DOCUMENT READY
-    $( this ).bind( "submit" , function( caller ){
+    $( this ).bind( 'submit' , function( caller ){
       $.validationEngine.onSubmitValid = true;
       $.validationEngine.settings = settings;
       if( $.validationEngine.submitValidation( this , settings )==false ){
@@ -96,7 +104,7 @@
     } );
 
    // Fade Out and Remove Error Message, when Clicked
-    $( ".formError" ).live( "click" , function(){
+    $( '.formError' ).live( 'click' , function(){
       $( this ).fadeOut( 150 ,function(){
         $(this).remove();
       } );
@@ -237,7 +245,7 @@
 
      // VALIDATE BLANK FIELD
       function _required( caller , rules ){
-        $caller = $( caller );
+        var $caller = $( caller );
         callerType = $caller.attr( "type" );
 
         switch( callerType ){
@@ -281,7 +289,7 @@
 
      // Validate Regular Expression Rules
       function _customRegex( caller , rules , position ){
-        $caller = $( caller );
+        var $caller = $( caller );
         customRule = rules[position+1];
         pattern = eval( $.validationEngine.settings.allrules[customRule].regex );
 
@@ -294,7 +302,7 @@
      // Validate "exemptString" Rules
      // TODO: Explain this better
       function _exemptString( caller , rules , position ){
-        $caller = $( caller );
+        var $caller = $( caller );
         customString = rules[position+1];
 
         if( customString==$caller.val() ){
@@ -328,7 +336,7 @@
         ajaxisError = $.validationEngine.isError;
 
         extraData = $.validationEngine.settings.allrules[customAjaxRule].extraData || '';
-        
+
        /* AJAX VALIDATION HAS ITS OWN UPDATE AND BUILD UNLIKE OTHER RULES */
         if(!ajaxisError){
           $.ajax({
@@ -409,7 +417,7 @@
 
      // Validate Matching Field Values
       function _confirm( caller , rules , position ){
-        $caller = $( caller );
+        var $caller = $( caller );
         confirmField = rules[position+1];
 
         if( $caller.val()!=$( '#'+confirmField ).val() ){
@@ -462,7 +470,7 @@
     } ,
 
     submitForm : function( caller ){
-      $caller = $( caller );
+      var $caller = $( caller );
 
       if( $.validationEngine.settings.ajaxSubmit ){
 
@@ -529,7 +537,7 @@
 
    // Error Prompt - Creation amd Display when an Error Occurs
     buildPrompt : function( caller , promptText , type , ajaxed ){
-      $caller = $( caller );
+      var $caller = $( caller );
       linkTofield = $.validationEngine.linkTofield( caller );
 
       if( !$.validationEngine.settings )
@@ -661,7 +669,7 @@
     } ,
 
     linkTofield : function( caller ){
-      return ( $( caller ).attr( "id" )+"formError" ).replace( /\[|\]/g , "" );
+      return ( $( caller ).attr( 'id' )+'formError' ).replace( /\[|\]/g , '' );
     } ,
 
    // Close Prompt when Error Corrected
