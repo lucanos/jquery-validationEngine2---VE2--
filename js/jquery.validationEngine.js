@@ -24,7 +24,7 @@
 
     settings = jQuery.extend( {
       allrules: allRules ,
-      validationEventTriggers: 'focusout' ,
+      validationEventTriggers: 'focusout mouseout' ,
       inlineValidation: true ,
       returnIsValid: false ,
       liveEvent: true ,
@@ -131,7 +131,7 @@
         $( this ).remove();
       } );
     } );
-    
+
     //console.groupEnd();
   }
 
@@ -150,7 +150,7 @@
 
       settings = {
         allrules: allRules ,
-        validationEventTriggers: 'blur' ,
+        validationEventTriggers: 'focusout mouseout' ,
         inlineValidation: true ,
         containerOverflow: false ,
         containerOverflowDOM: '' ,
@@ -163,7 +163,7 @@
         failure : function(){}
       };
       $.validationEngine.settings = settings;
-      
+
       //console.groupEnd();
     } ,
 
@@ -175,14 +175,16 @@
       if( !$.validationEngine.settings )
         $.validationEngine.defaultSetting();
       rulesParsing = $caller.attr( 'class' );
+      //console.log( 'Field Class = "%s"' , rulesParsing );
       rulesRegExp = /\[(.*)\]/;
       getRules = rulesRegExp.exec( rulesParsing );
+      //console.log( 'Rules Array = %o' , getRules );
       if( getRules==null )
         return false;
       str = getRules[1];
       pattern = /\[|,|\]/;
-      result= str.split( pattern );
-      
+      result = str.split( pattern );
+
       //console.groupEnd();
       return $.validationEngine.validateCall( caller , result );
     } ,
@@ -651,10 +653,10 @@
         var arrowHTML = '';
         if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) ){
           $arrow
-            .addClass( "formErrorArrowBottom" )
+            .addClass( 'formErrorArrowBottom' )
           for( l=1 ; l<11 ; l++ )
             arrowHTML += '<div class="line'+l+'"><!-- --></div>';
-          topPositionAdjust = 0;
+          topPositionAdjust = -11;
         }
         if( /^top(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) ){
           for( l=10 ; l>0 ; l-- )
@@ -663,7 +665,7 @@
         }
         $arrow
           .html( arrowHTML );
-        
+
       }else{
        // Adjustments for Radio Buttons and Checkboxes ONLY
         if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
@@ -702,14 +704,24 @@
         .find( '.formErrorContent' )
           .html( promptText );
 
+      if( $.validationEngine.showTriangle!=false ){
+        if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+          topPositionAdjust = -11;
+        if( /^top(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+          topPositionAdjust = 15;
+      }else{
+       // Adjustments for Radio Buttons and Checkboxes ONLY
+        if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+          topPositionAdjust = -13;
+        if( /^top(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+          topPositionAdjust = 8;
+      }
+
       var calculatedPosition = $.validationEngine.calculatePosition( caller , promptText , type , ajaxed , updateThisPrompt );
 
-      calculatedPosition.callerTopPosition += 'px';
-      calculatedPosition.callerleftPosition += 'px';
-      calculatedPosition.marginTopSize += 'px';
+      calculatedPosition.callerTopPosition += topPositionAdjust;
       $updateThisPrompt.animate( {
-        'top'       : calculatedPosition.callerTopPosition ,
-        'marginTop' : calculatedPosition.marginTopSize
+        'top'       : calculatedPosition.callerTopPosition+'px'
       } );
       //console.groupEnd();
     } ,

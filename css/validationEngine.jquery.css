@@ -26,6 +26,7 @@
   padding:4px 10px 4px 10px;
   box-shadow:0px 0px 6px #000;-moz-box-shadow:0px 0px 6px #000;-webkit-box-shadow:0px 0px 6px #000;
   border-radius:6px;-moz-border-radius:6px;-webkit-border-radius:6px;
+  margin-top:8px;
 }
 .greenPopup .formErrorContent {
   background:#33be40;
@@ -48,6 +49,8 @@
   bottom:auto;
   margin:0;
   position:absolute;
+  
+  top:0px;
 }
 
 .formError .formErrorArrow div {
