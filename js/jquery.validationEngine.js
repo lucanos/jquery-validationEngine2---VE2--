@@ -214,10 +214,10 @@
             _required( caller , rules );
             break;
           case 'custom' :
-             _customRegex( caller , rules , i );
+            _customRegex( caller , rules , i );
             break;
           case 'exemptString' :
-             _exemptString( caller , rules , i );
+            _exemptString( caller , rules , i );
             break;
           case 'ajax' :
             if( !$.validationEngine.onSubmitValid )
@@ -235,11 +235,18 @@
             caller = $( 'input[name="'+callerName+'"]' );
           break;
           case 'confirm' :
-             _confirm( caller , rules , i );
+            _confirm( caller , rules , i );
             break;
           case 'funcCall' :
-              _funcCall( caller , rules , i );
+            _funcCall( caller , rules , i );
             break;
+        }
+       // If the field has an "errormsg" attribute, and we have at least one error
+        if( $caller.attr( 'errormsg' ) && $.validationEngine.isError ){
+         // Set the Error Message content to the "errormsg" attribute.
+          promptText = $caller.attr( 'errormsg' );
+         // Do not perform any further tests.
+          break;
         }
       }
 
@@ -709,23 +716,28 @@
           callerTopPosition += -inputHeight -10;
           break;
         case 'centerRight' :
-          callerleftPosition +=  callerWidth +13;
+          callerleftPosition += callerWidth +13;
           break;
         case 'bottomLeft' :
           callerTopPosition = callerTopPosition + callerHeight +15;
           break;
         case 'bottomRight' :
-          callerleftPosition +=  callerWidth -30;
-          callerTopPosition +=  callerHeight +5;
+          callerleftPosition += callerWidth -30;
+          callerTopPosition += callerHeight +5;
           break;
       }
 
+      console.log( '%o' , {
+        'callerTopPosition'  : callerTopPosition ,
+        'callerleftPosition' : callerleftPosition ,
+        'marginTopSize'      : marginTopSize
+      } );
       console.groupEnd();
       return {
         'callerTopPosition'  : callerTopPosition ,
         'callerleftPosition' : callerleftPosition ,
         'marginTopSize'      : marginTopSize
-      }
+      };
     } ,
 
     linkTofield : function( caller ){
