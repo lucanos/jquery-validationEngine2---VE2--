@@ -22,7 +22,7 @@
 <script>
 $( document ).ready( function() {
   $("#formID").validationEngine({
-    promptPosition : 'bottomLeft'
+    promptPosition : 'topLeft'
   });
 });
 
@@ -36,6 +36,7 @@ function validate2fields(){
 </head>
 
 <body>
+  <a href="http://github.com/lucanos/jquery-validationEngine2---VE2--"><img style="position:absolute;top:0;right:0;border:0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a>
   <ul id="testEvents">
     <li><a href="javascript:void(alert($('#formID').validationEngine({returnIsValid:true})));">Return true or false without binding anything</a></li>
     <li><a href="javascript:void($.validationEngine.buildPrompt('#formID','This is an example','error'));">Build a prompt on a div</a></li>

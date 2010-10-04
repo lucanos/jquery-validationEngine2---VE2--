@@ -675,10 +675,14 @@
 
       calculatedPosition.callerTopPosition += topPositionAdjust;
       $divFormError.css({
+        'z-index'   : (5000+calculatedPosition.callerTopPosition) ,
         'top'       : calculatedPosition.callerTopPosition+'px' ,
         'left'      : calculatedPosition.callerleftPosition+'px' ,
         'marginTop' : calculatedPosition.marginTopSize+'px' ,
         'opacity'   : 0
+      });
+      $arrow.css({
+        'z-index'   : (5000+calculatedPosition.callerTopPosition+1)
       });
 
       console.groupEnd();
