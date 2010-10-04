@@ -24,7 +24,7 @@
 
     settings = jQuery.extend( {
       allrules: allRules ,
-      validationEventTriggers: 'focusout mouseout' ,
+      validationEventTriggers: 'focusout' ,
       inlineValidation: true ,
       returnIsValid: false ,
       liveEvent: true ,
@@ -150,7 +150,7 @@
 
       settings = {
         allrules: allRules ,
-        validationEventTriggers: 'focusout mouseout' ,
+        validationEventTriggers: 'focusout' ,
         inlineValidation: true ,
         containerOverflow: false ,
         containerOverflowDOM: '' ,
