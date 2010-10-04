@@ -21,12 +21,16 @@
 -->
 <script>
 $( document ).ready( function() {
-  $("#formID").validationEngine();
+  $("#formID").validationEngine({
+    promptPosition : 'topLeft'
+  });
 });
 
 // JUST AN EXAMPLE OF VALIDATIN CUSTOM FUNCTIONS : funcCall[validate2fields]
 function validate2fields(){
-  return ( $( "#firstname" ).val()=="" || $( "#lastname" ).val()=="" );
+  if( $( "#firstname" ).val()!="" && $( "#lastname" ).val()=="" )
+    return "Both Firstname and Lastname Required";
+  return true;
 }
 </script>
 </head>
