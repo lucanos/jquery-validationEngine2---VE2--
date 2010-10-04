@@ -37,7 +37,7 @@
 
 .formError .formErrorArrow {
   position:absolute;
-  bottom:0;
+  bottom:-13px;
   left:20px;
   width:15px;
   height:15px;
