@@ -33,51 +33,51 @@
           "alertText" : "* Your fields do not match"
         } ,
         "telephone" : {
-          "regex"     : "/^[0-9\-\(\)\ ]+$/" ,
+          "regex"     : /^[\d\-\(\)\ ]+$/ ,
           "alertText" : "* Invalid phone number"
         } ,
           "telephoneAUS" : {
-            "regex"     : "/^(?:(?:\(?0[2378]\)?\ ?)?[2-9]\d{3}\ ?\d{4})|(?:04\d{2}(?:\ ?\d{3}\ ?\d{3}|(?:\ ?\d{2}){2}\ ?\d{2}))$/" ,
+            "regex"     : /^(?:(?:\(?0[2378]\)?\ ?)?[2-9]\d{3}\ ?\d{4})|(?:04\d{2}(?:\ ?\d{3}\ ?\d{3}|(?:\ ?\d{2}){2}\ ?\d{2}))$/ ,
             "alertText" : "* Invalid Australian phone number"
           } ,
           "telephoneAUSmobile" : {
-            "regex"     : "/^04\d{2}(?:\ ?\d{3}\ ?\d{3}|(?:\ ?\d{2}){2}\ ?\d{2})$/" ,
+            "regex"     : /^04\d{2}(?:\ ?\d{3}\ ?\d{3}|(?:\ ?\d{2}){2}\ ?\d{2})$/ ,
             "alertText" : "* Invalid Australian mobile phone number"
           } ,
         "email" : {
-          "regex"     : "/^[a-zA-Z0-9_\.\-]+\@([a-zA-Z0-9\-]+\.)+[a-zA-Z0-9]{2,4}$/" ,
+          "regex"     : /^(?:[A-Z0-9][\w\d\.\-]+)(?:[\+\/]?(?:[\w\d\.\-]+))?@(?:[A-Z0-9][\w\-]*\.)+[A-Z0-9][\w\-]*[A-Z]$/i ,
           "alertText" : "* Invalid email address"
         } ,
         "date" : {
-          "regex"     : "/^(?:[012]?[0-9]|3[01])[\/\-](?:0?[0-9]|1[0-2])[\/\-](?:[12][0-9]{3})$/" ,
+          "regex"     : /^(?:[012]?\d|3[01])[\/\-](?:0?\d|1[0-2])[\/\-](?:[12]\d{3})$/ ,
           "alertText" : "* Invalid date, must be in DD/MM/YYYY format"
         } ,
           "dateUS" : {
-            "regex"     : "/^(?:[12][0-9]{3})[\/\-](?:0?[0-9]|1[0-2])[\/\-](?:[012]?[0-9]|3[01])$/" ,
+            "regex"     : /^(?:[12]\d{3})[\/\-](?:0?\d|1[012])[\/\-](?:[012]?\d|3[01])$/ ,
             "alertText" : "* Invalid date, must be in YYYY/MM/DD format"
           } ,
           "dateEU" : {
-            "regex"     : "/^(?:[012]?[0-9]|3[01])[\/\-](?:0?[0-9]|1[0-2])[\/\-](?:[12][0-9]{3})$/" ,
+            "regex"     : /^(?:[012]?\d|3[01])[\/\-](?:0?\d|1[0-2])[\/\-](?:[12]\d{3})$/ ,
             "alertText" : "* Invalid date, must be in DD/MM/YYYY format"
           } ,
         "onlyNumber" : {
-          "regex"     : "/^[0-9\.\ ]*$/" ,
+          "regex"     : /^[\d\.\ ]*$/ ,
           "alertText" : "* Numbers only"
         } ,
         "onlyNumberStrict" : {
-          "regex"     : "/^[0-9\.]*$/" ,
+          "regex"     : /^[\d\.]*$/ ,
           "alertText" : "* Numbers only"
         } ,
         "onlyCash" : {
-          "regex"     : "/^[\$][0-9]*(?:\.[0-9]*)?$/" ,
+          "regex"     : /^[\$]\d*(?:\.\d*)?$/ ,
           "alertText" : "* Monetary value only"
         } ,
         "onlyLetter" : {
-          "regex"     : "/^[a-zA-Z\ \']*$/" ,
+          "regex"     : /^[A-Z\ \']*$/i ,
           "alertText" : "* Letters only"
         } ,
         "noSpecialCharacters" : {
-          "regex"     : "/^[0-9a-zA-Z]*$/" ,
+          "regex"     : /^[\dA-Z]*$/i ,
           "alertText" : "* No special characters allowed"
         } ,
         "ajaxUser" : {
