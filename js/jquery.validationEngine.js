@@ -51,18 +51,20 @@
         allowReturnIsvalid = false;
         $this = $(this);
        // LIVE event, vast performance improvement over BIND
-        $this.find( '[class*="validate"][type!="checkbox"]:visible' ).not( ':disabled' )
+        $this.find( '[class*="validate"][type!="checkbox"]:visible' )
           .live( settings.validationEventTriggers , function(){
             caller = $( this );
 //          console.groupCollapsed( '%o.%s()' , caller , settings.validationEventTriggers );
-            _inlineEvent( caller );
+            if( !caller.is( ':disabled, :hidden' ) )
+              _inlineEvent( caller );
 //          console.groupEnd();
           } );
-        $this.find( '[class*="validate"][type="checkbox"]:visible, [class*="validate"][type^="select"]:visible' ).not( ':disabled' )
+        $this.find( '[class*="validate"][type="checkbox"]:visible, [class*="validate"][type^="select"]:visible' )
           .live( 'click keyup' , function(){
             caller = $( this );
 //          console.groupCollapsed( '%o.click()' , caller );
-            _inlineEvent( caller );
+            if( !caller.is( ':disabled, :hidden' ) )
+              _inlineEvent( caller );
 //          console.groupEnd();
           } );
         firstvalid = false;
@@ -810,6 +812,8 @@
       $.validationEngine.ajaxValid = true;
 
       $caller.find( '[class*="validate["]' ).each( function(){
+        if( $( this ).is( ':disabled, :hidden' ) )
+          return true;
         linkTofield = $.validationEngine.linkTofield( this );
         if( !$( '.'+linkTofield+'.ajaxed' ).length ){
          // DO NOT UPDATE ALREADY AJAXED FIELDS (only happen if no normal errors, don't worry)
