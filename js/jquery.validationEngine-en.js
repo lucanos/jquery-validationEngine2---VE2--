@@ -20,13 +20,14 @@
           "alertText3" : "characters allowed"
         } ,
         "maxCheckbox" : {
-          "regex"     : "none" ,
-          "alertText" : "* Checks allowed Exceeded"
+          "regex"      : "none" ,
+          "alertText"  : "* Please select no more than" ,
+          "alertText2" : "option(s)"
         } ,
         "minCheckbox" : {
           "regex"      : "none" ,
-          "alertText"  : "* Please select" ,
-          "alertText2" : "options"
+          "alertText"  : "* Please select at least" ,
+          "alertText2" : "option(s)"
         } ,
         "confirm" : {
           "regex"     : "none" ,
@@ -69,7 +70,7 @@
           "alertText" : "* Numbers only"
         } ,
         "onlyCash" : {
-          "regex"     : /^[\$]\d*(?:\.\d*)?$/ ,
+          "regex"     : /^[\$]?\d+(?:\,\d{3})*(?:\.\d*)?$/ ,
           "alertText" : "* Monetary value only"
         } ,
         "onlyLetter" : {

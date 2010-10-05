@@ -27,7 +27,7 @@
       validationEventTriggers: 'focusout' ,
       inlineValidation: true ,
       returnIsValid: false ,
-      liveEvent: true ,
+      /* liveEvent: true , - Defaulting to this now. No point keeping it as a setting */
       unbindEngine: true ,
       containerOverflow: false ,
       containerOverflowDOM: '' ,
@@ -51,37 +51,20 @@
         allowReturnIsvalid = false;
         $this = $(this);
        // LIVE event, vast performance improvement over BIND
-        if( settings.liveEvent ){
-          $this.find( '[class*="validate"][type!="checkbox"]' )
-            .live( settings.validationEventTriggers , function(){
-              caller = $( this );
-              //console.groupCollapsed( '%o.%s()' , caller , settings.validationEventTriggers );
-              _inlineEvent( caller );
-              //console.groupEnd();
-            } );
-          $this.find( '[class*="validate"][type="checkbox"]' )
-            .live( 'click' , function(){
-              caller = $( this );
-              //console.groupCollapsed( '%o.click()' , caller );
-              _inlineEvent( caller );
-              //console.groupEnd();
-            } );
-        }else{
-          $this.find( '[class*="validate"]' ).not( '[type="checkbox"]' )
-            .bind( settings.validationEventTriggers , function(){
-              caller = $( this );
-              //console.groupCollapsed( '%o.%s()' , caller , settings.validationEventTriggers );
-              _inlineEvent( caller );
-              //console.groupEnd();
-            } );
-          $this.find( '[class*="validate"][type="checkbox"]' )
-            .bind( 'click' , function(){
-              caller = $( this );
-              //console.groupCollapsed( '%o.click()' , caller );
-              _inlineEvent( caller );
-              //console.groupEnd();
-            } );
-        }
+        $this.find( '[class*="validate"][type!="checkbox"]:visible' )
+          .live( settings.validationEventTriggers , function(){
+            caller = $( this );
+            //console.groupCollapsed( '%o.%s()' , caller , settings.validationEventTriggers );
+            _inlineEvent( caller );
+            //console.groupEnd();
+          } );
+        $this.find( '[class*="validate"][type="checkbox"]:visible, [class*="validate"][type^="select"]:visible' )
+          .live( 'click keyup' , function(){
+            caller = $( this );
+            //console.groupCollapsed( '%o.click()' , caller );
+            _inlineEvent( caller );
+            //console.groupEnd();
+          } );
         firstvalid = false;
       }
 
@@ -206,6 +189,9 @@
 
       for( i=0 ; i<rules.length ; i++ ){
         //console.log( 'Processing Rule#%s - %s' , i , rules[i] );
+       // Empty rule - Skip
+        if( rules[i]=='' )
+          continue;
         switch( rules[i] ){
           case 'optional' :
             if( !$caller.val() ){
@@ -337,9 +323,14 @@
         customRule = rules[position+1];
         pattern = $.validationEngine.settings.allrules[customRule].regex;
 
+        //console.log( 'customRule = %o' , customRule );
+        //console.log( 'RegExp = %o' , pattern );
         if( !pattern.test( $caller.val() ) ){
+          //console.log( 'Pattern did not match "%s"' , $caller.val() );
           $.validationEngine.isError = true;
           promptText += $.validationEngine.settings.allrules[customRule].alertText+'<br />';
+        }else{
+          //console.log( 'Pattern matched "%s"' , $caller.val() );
         }
         //console.groupEnd();
       }
@@ -520,7 +511,8 @@
         if( groupSize>nbCheck ){
           $.validationEngine.showTriangle = false;
           $.validationEngine.isError = true;
-          promptText += $.validationEngine.settings.allrules['maxCheckbox'].alertText+'<br />';
+          promptText += $.validationEngine.settings.allrules['maxCheckbox'].alertText+' '+nbCheck+' '+
+                        $.validationEngine.settings.allrules['maxCheckbox'].alertText2+'<br />';
         }
         //console.groupEnd();
       }
@@ -531,11 +523,15 @@
         nbCheck = eval( rules[position+1] );
         groupSize = $( 'input[name="'+$( caller ).attr( 'name' )+'"]:checked' ).size();
 
+        //console.log( 'nbCheck = %s, groupSize = %s' , nbCheck , groupSize );
         if( groupSize<nbCheck ){
+          //console.log( 'Insufficient Checkboxes Detected' );
           $.validationEngine.isError = true;
           $.validationEngine.showTriangle = false;
           promptText += $.validationEngine.settings.allrules['minCheckbox'].alertText+' '+nbCheck+' '+
                         $.validationEngine.settings.allrules['minCheckbox'].alertText2+'<br />';
+        }else{
+          //console.log( 'Sufficient Checkboxes Detected' );
         }
         //console.groupEnd();
       }
@@ -687,9 +683,8 @@
         'marginTop' : calculatedPosition.marginTopSize+'px' ,
         'opacity'   : 0
       });
-      $arrow.css({
-        'z-index'   : (5000-calculatedPosition.callerTopPosition+1)
-      });
+      $divFormError.find('.formErrorArrow')
+        .css( 'z-index' , ( 5000-calculatedPosition.callerTopPosition+1 ) );
 
      // Add Attribute to Field, specifying the Form Error Element
       $caller.attr( 'formerrorclass' , linkTofield );
