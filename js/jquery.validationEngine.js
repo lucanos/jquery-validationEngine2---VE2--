@@ -1,8 +1,8 @@
 /*
- * Inline Form Validation Engine 1.7, jQuery plugin
+ * Inline Form Validation Engine 2.0.0, jQuery plugin
  *
- * Copyright(c) 2010, Cedric Dugas
- * http://www.position-relative.net
+ * Copyright(c) 2010, Cedric Dugas [http://www.position-relative.net]
+ * Copyright(c) 2010, Luke Stevenson [http://www.lucanos.com]
  *
  * Form validation engine allowing custom regex rules to be added.
  * Thanks to Francois Duquette and Teddy Limousin
@@ -681,14 +681,14 @@
 
       calculatedPosition.callerTopPosition += topPositionAdjust;
       $divFormError.css({
-        'z-index'   : (5000+calculatedPosition.callerTopPosition) ,
+        'z-index'   : (5000-calculatedPosition.callerTopPosition) ,
         'top'       : calculatedPosition.callerTopPosition+'px' ,
         'left'      : calculatedPosition.callerleftPosition+'px' ,
         'marginTop' : calculatedPosition.marginTopSize+'px' ,
         'opacity'   : 0
       });
       $arrow.css({
-        'z-index'   : (5000+calculatedPosition.callerTopPosition+1)
+        'z-index'   : (5000-calculatedPosition.callerTopPosition+1)
       });
 
      // Add Attribute to Field, specifying the Form Error Element
