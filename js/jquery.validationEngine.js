@@ -13,12 +13,16 @@
 (function( $ ){
 
 	$.fn.validationEngine = function( settings ){
-//  console.groupCollapsed( "validationEngine( %o )" , settings );
+;;; //console.groupCollapsed( "validationEngine( %o )" , settings );
 
    // IS THERE A LANGUAGE LOCALISATION ?
+;;; //console.log( 'Checking Language Localisation' );
     if( $.validationEngineLanguage ){
+;;;   //console.log( 'Language Localisation Detected - Loaded' );
       allRules = $.validationEngineLanguage.allRules;
     }else{
+;;;   //console.error( 'No Language Localisation Detected' );
+     // TODO - Include a Default Language/Rules Set
       $.validationEngine.debug( 'Validation engine rules are not loaded check your external file' );
     }
 
@@ -32,6 +36,7 @@
       containerOverflow: false ,
       containerOverflowDOM: '' ,
       ajaxSubmit: false ,
+      triggerOnSubmit: false ,
       scroll: true ,
       promptPosition: 'topRight' ,	// Error Message Position. Options: topLeft, topRight, bottomLeft, centerRight, bottomRight
       success: false ,
@@ -45,78 +50,101 @@
 
    // Validating Inline ?
     if( settings.inlineValidation==true ){
+;;;   //console.log( 'Inline Validation (Validation as you go) is Enabled' );
 
      // NEEDED FOR THE SETTING returnIsValid
       if( !settings.returnIsValid ){
+;;;     //console.log( 'Not Executed as a "returnIsValid" request' );
         allowReturnIsvalid = false;
         $this = $(this);
        // LIVE event, vast performance improvement over BIND
-        $this.find( '[class*="validate"][type!="checkbox"]:visible' )
+;;;     //console.log( 'Binding (Live) Validation to All Non-Checkboxes' );
+        $this.find( '[class*="validate"][type!="checkbox"]' )
           .live( settings.validationEventTriggers , function(){
             caller = $( this );
-//          console.groupCollapsed( '%o.%s()' , caller , settings.validationEventTriggers );
-            if( !caller.is( ':disabled, :hidden' ) )
+;;;         //console.groupCollapsed( '%o.%s()' , caller , settings.validationEventTriggers );
+            if( !caller.is( ':disabled, :hidden' ) ){
+;;;           //console.log( 'Element is not Disabled or Hidden - Validating' );
               _inlineEvent( caller );
-//          console.groupEnd();
+            }else{
+;;;           //console.log( 'Element is Disabled or Hidden - Not Validating' );
+            }
+;;;         //console.groupEnd();
           } );
-        $this.find( '[class*="validate"][type="checkbox"]:visible, [class*="validate"][type^="select"]:visible' )
-          .live( 'click keyup' , function(){
+;;;     //console.log( 'Binding (Live) Validation to All Checkboxes & Select Elements' );
+        $this.find( '[class*="validate"][type="checkbox"], [class*="validate"][type^="select"]' )
+          .live( 'change' , function(){
             caller = $( this );
-//          console.groupCollapsed( '%o.click()' , caller );
-            if( !caller.is( ':disabled, :hidden' ) )
+;;;         //console.groupCollapsed( '%o.change()' , caller );
+            if( !caller.is( ':disabled, :hidden' ) ){
+;;;           //console.log( 'Element is not Disabled or Hidden - Validating' );
               _inlineEvent( caller );
-//          console.groupEnd();
+            }else{
+;;;           //console.log( 'Element is Disabled or Hidden - Not Validating' );
+            }
+;;;         //console.groupEnd();
           } );
         firstvalid = false;
+      }else{
+;;;     //console.log( 'Executed as a "returnIsValid" request' );
       }
 
       function _inlineEvent( caller ){
         caller = $( caller );
-//      console.groupCollapsed( "_inlineEvent( %o )" , caller );
+;;;     //console.groupCollapsed( "_inlineEvent( %o )" , caller );
         $.validationEngine.settings = settings;
        // Stop Inline Validation This Time Only
         if( $.validationEngine.intercept==false
             || !$.validationEngine.intercept ){
+;;;       //console.log( 'Do Not Intercept' );
           $.validationEngine.onSubmitValid = false;
-          $.validationEngine.loadValidation( caller );
+;;;       //console.log( 'Perform Field Validation' );
+          $.validationEngine.getValidationRules( caller );
         }else{
+;;;       //console.log( 'Intercept' );
           $.validationEngine.intercept = false;
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
 
+    }else{
+;;;   //console.log( 'Inline Validation (Validation as you go) is NOT Enabled' );
     }
 
    // Do validation and return true or false, it bypass everything
     if( settings.returnIsValid ){
-//    console.groupEnd();
+;;;   //console.log( 'Executed as a "returnIsValid" request - Running submitValidation()' )
       return !$.validationEngine.submitValidation( this , settings );
     }
 
-   // On FORM Submit, Control AJAX function if specified on DOCUMENT READY
-    $( this ).bind( 'submit' , function(){
-      caller = $( this );
-//    console.groupCollapsed( '%o.submit()' , caller );
-      $.validationEngine.onSubmitValid = true;
-      $.validationEngine.settings = settings;
-      if( $.validationEngine.submitValidation( this , settings )!=false ){
-        settings.failure && settings.failure();
-//      console.groupEnd();
-        return false;
-      }
-      if( $.validationEngine.submitForm( this , settings )==true ){
-//      console.groupEnd();
-        return false;
-      }
-    } );
+    if( $.validationEngine.settings.triggerOnSubmit===true ){
+     // On FORM Submit, Control AJAX function if specified on DOCUMENT READY
+      $( this ).bind( 'submit' , function(){
+        caller = $( this );
+;;;     //console.groupCollapsed( '%o.submit()' , caller );
+        $.validationEngine.onSubmitValid = true;
+        $.validationEngine.settings = settings;
+        if( $.validationEngine.submitValidation( this , settings )!=false ){
+          settings.failure && settings.failure();
+;;;       //console.groupEnd();
+          return false;
+        }
+        if( $.validationEngine.submitForm( this , settings )==true ){
+;;;       //console.groupEnd();
+          return false;
+        }
+      } );
+    }
 
    // Fade Out and Remove Error Message, when Clicked
     $( '.formError' ).live( 'click' , function(){
+;;;   //console.log( '.formError.click() detected' );
       $( this ).fadeOut( 150 ,function(){
+;;      //console.log( '.formError.click() completed' );
         $( this ).remove();
       } );
     } );
-//    console.groupEnd();
+;;;   //console.groupEnd();
   }
 
 
@@ -124,7 +152,7 @@
 
    // Not generally used, needed for the API, DO NOT TOUCH
     defaultSetting : function( caller ){
-//    console.groupCollapsed( 'defaultSetting( %o )' , caller );
+;;;   //console.groupCollapsed( 'defaultSetting( %o )' , caller );
 
       if( $.validationEngineLanguage ){
         allRules = $.validationEngineLanguage.allRules;
@@ -147,33 +175,38 @@
         failure : function(){}
       };
       $.validationEngine.settings = settings;
-//      console.groupEnd();
+;;;     //console.groupEnd();
     } ,
 
    // Get Validation Rules to be Tested
-    loadValidation : function( caller ){
-//    console.groupCollapsed( "loadValidation( %o )" , caller );
+    getValidationRules : function( caller ){
+;;;   //console.groupCollapsed( "getValidationRules( %o )" , caller );
       var $caller = $( caller );
 
       if( !$.validationEngine.settings )
         $.validationEngine.defaultSetting();
       rulesParsing = $caller.attr( 'class' );
-//    console.log( 'Field Class = "%s"' , rulesParsing );
+;;;   //console.log( 'Field Class = "%s"' , rulesParsing );
       rulesRegExp = /\[(.*)\]/;
       getRules = rulesRegExp.exec( rulesParsing );
-//    console.log( 'Rules Array = %o' , getRules );
-      if( getRules==null )
+;;;   //console.log( 'Rules Array = %o' , getRules );
+      if( getRules==null ){
+;;;     //console.log( 'No Rules Array - Returning False' );
+;;;     //console.groupEnd();
         return false;
+      }
       str = getRules[1];
       pattern = /\[|,|\]/;
       result = str.split( pattern );
-//      console.groupEnd();
-      return $.validationEngine.validateCall( caller , result );
+;;;   //console.log( 'result = "%o"' , result );
+;;;   //console.log( 'Running processFieldValidation()' );  
+;;;   //console.groupEnd();
+      return $.validationEngine.processFieldValidation( caller , result );
     } ,
 
    // Execute Validation for This Field
-    validateCall : function( caller , rules ){
-//    console.groupCollapsed( "validateCall( %o , %o )" , caller , rules );
+    processFieldValidation : function( caller , rules ){
+;;;   //console.groupCollapsed( "processFieldValidation( %o , %o )" , caller , rules );
       var promptText = '';
       var $caller = $( caller );
       ajaxValidate = false;
@@ -183,11 +216,14 @@
       callerType = $caller.attr( 'type' );
 
      // If there is No ID attached to this field, create a new, hopefully unique, one.
-      if( !$caller.attr( 'id' ) )
-        $caller.attr( 'id' , 'validationEngine_'+( new Date ).getTime()+( Math.random()+'' ).replace( '0.' , '' ) );
+      if( !$caller.attr( 'id' ) ){
+        var newID = 'validationEngine_'+( new Date ).getTime()+( Math.random()+'' ).replace( '0.' , '' );
+        $caller.attr( 'id' , newID );
+        //console.log( 'Element had No ID. New ID = "%s"' , newID );
+      }
 
       for( i=0 ; i<rules.length ; i++ ){
-//      console.log( 'Processing Rule#%s - %s' , i , rules[i] );
+;;;     //console.log( 'Processing Rule#%s - %s' , i , rules[i] );
        // Empty rule - Skip
         if( rules[i]=='' )
           continue;
@@ -197,7 +233,7 @@
               $.validationEngine.closePrompt( caller );
               return $.validationEngine.isError;
             }else{
-//            console.log( 'Field is Empty - No further processing required' );
+;;;           //console.log( 'Field is Not Empty - Valid' );
             }
             break;
           case 'required' :
@@ -259,29 +295,33 @@
      /* UNFORTUNATE RADIO AND CHECKBOX GROUP HACKS */
      /* As my validation is looping input with id's we need a hack for my validation to understand to group these inputs */
       function radioHack(){
-//      console.groupCollapsed( 'radioHack()' );
+;;;     //console.groupCollapsed( 'radioHack()' );
        // Hack for radio/checkbox group button, the validation go the first radio/checkbox of the group
         if( $( 'input[name="'+callerName+'"]' ).size()>1 ){
-          $caller = caller = $( 'input[name="'+callerName+'"][type!=hidden]:first' );
+;;;       //console.log( 'More than 1 Radio/Checkbox Element' );
+          $caller = ( caller = $( 'input[name="'+callerName+'"][type!=hidden]:first' ) );
           $.validationEngine.showTriangle = false;
+        }else{
+;;;       //console.log( '1 or Less Radio/Checkbox Element' );
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
 
      /* VALIDATION FUNCTIONS */
 
      // VALIDATE BLANK FIELD
       function _required( caller , rules ){
-//      console.groupEnd( "_required( %o , %o )" , caller , rules );
+;;;     //console.groupEnd( "_required( %o , %o )" , caller , rules );
         var $caller = $( caller );
         callerType = $caller.attr( 'type' );
+        var reqResult = true;
 
         switch( callerType ){
           case 'text' :
           case 'password' :
           case 'textarea' :
             if( !$caller.val() ){
-              $.validationEngine.isError = true;
+              reqResult = false;
               promptText += $.validationEngine.settings.allrules[rules[i]].alertText+'<br />';
             }
             break;
@@ -289,7 +329,7 @@
           case 'checkbox' :
             callerName = $caller.attr( 'name' );
             if( $( 'input[name="'+callerName+'"]:checked' ).size()==0 ){
-              $.validationEngine.isError = true;
+              reqResult = false;
               if( $( 'input[name="'+callerName+'"]' ).size()==1 ){
                 promptText += $.validationEngine.settings.allrules[rules[i]].alertTextCheckboxSingle+'<br />';
               }else{
@@ -298,45 +338,45 @@
             }
             break;
           case 'select-one' :
-           // added by paul@kinetek.net for select boxes, Thank you
-            if( !$caller.val() ){
-              $.validationEngine.isError = true;
-              promptText += $.validationEngine.settings.allrules[rules[i]].alertText+'<br />';
-            }
-            break;
           case 'select-multiple' :
            // added by paul@kinetek.net for select boxes, Thank you
             if( !$caller.find( 'option:selected' ).val() ) {
-              $.validationEngine.isError = true;
+              reqResult = false;
               promptText += $.validationEngine.settings.allrules[rules[i]].alertText+'<br />';
             }
             break;
         }
-//      console.groupEnd();
+
+        if( !reqResult ){
+          $.validationEngine.isError = true;
+        }
+;;;     //console.log( 'Returning %o', reqResult );
+;;;     //console.groupEnd();
+        return reqResult;
       }
 
      // Validate Regular Expression Rules
       function _customRegex( caller , rules , position ){
-//      console.groupCollapsed( "_customRegex( %o , %o , %s )" , caller , rules , position );
+;;;     //console.groupCollapsed( "_customRegex( %o , %o , %s )" , caller , rules , position );
         var $caller = $( caller );
         customRule = rules[position+1];
         pattern = $.validationEngine.settings.allrules[customRule].regex;
-//        console.log( 'customRule = %o' , customRule );
-//      console.log( 'RegExp = %o' , pattern );
+;;;       //console.log( 'customRule = %o' , customRule );
+;;;     //console.log( 'RegExp = %o' , pattern );
         if( !pattern.test( $caller.val() ) ){
-//        console.log( 'Pattern did not match "%s"' , $caller.val() );
+;;;       //console.log( 'Pattern did not match "%s"' , $caller.val() );
           $.validationEngine.isError = true;
           promptText += $.validationEngine.settings.allrules[customRule].alertText+'<br />';
         }else{
-//        console.log( 'Pattern matched "%s"' , $caller.val() );
+;;;       //console.log( 'Pattern matched "%s"' , $caller.val() );
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
 
      // Validate "exemptString" Rules
      // TODO: Explain this better
       function _exemptString( caller , rules , position ){
-//      console.groupCollapsed( "_exemptString( %o , %o , %s )" , caller , rules , position );
+;;;     //console.groupCollapsed( "_exemptString( %o , %o , %s )" , caller , rules , position );
         var $caller = $( caller );
         customString = rules[position+1];
 
@@ -345,12 +385,12 @@
          // TODO: Check whether this should be using the "required" alertText
           promptText += $.validationEngine.settings.allrules['required'].alertText+'<br />';
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
 
      // Validate by calling Function outside of the Engine
       function _funcCall( caller , rules , position ){
-//      console.groupCollapsed( "_funcCall( %o , %o , %s )" , caller , rules , position );
+;;;     //console.groupCollapsed( "_funcCall( %o , %o , %s )" , caller , rules , position );
         customRule = rules[position+1];
         var fn = window[ $.validationEngine.settings.allrules[customRule].nname ];
 
@@ -358,25 +398,25 @@
           var fn_result = fn( caller );
           switch( typeof( fn_result ) ){
             case 'boolean' :
-//            console.log( 'Result is Boolean : %s' , fn_result );
+;;;           //console.log( 'Result is Boolean : %s' , fn_result );
               if( fn_result===false ){
                 $.validationEngine.isError = true;
                 promptText += $.validationEngine.settings.allrules[customRule].alertText+'<br />';
               }
               break;
             case 'string' :
-//            console.log( 'Result is String : %s' , fn_result );
+;;;           //console.log( 'Result is String : %s' , fn_result );
               if( fn_result!=='' ){
                 $.validationEngine.isError = true;
                 promptText += ( !/^\*\s+/.test( fn_result ) ? '* ' : '' )+fn_result+'<br />';
               }
           }
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
 
       function _ajax( caller , rules , position ){
-//      console.groupCollapsed( "_ajax( %o , %o , %s )" , caller , rules , position );
+;;;     //console.groupCollapsed( "_ajax( %o , %o , %s )" , caller , rules , position );
         $caller = $( caller );
 
         customAjaxRule = rules[position+1];
@@ -468,12 +508,12 @@
             }
           });
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
 
      // Validate Matching Field Values
       function _confirm( caller , rules , position ){
-//      console.groupCollapsed( "_confirm( %o , %o , %s )" , caller , rules , position );
+;;;     //console.groupCollapsed( "_confirm( %o , %o , %s )" , caller , rules , position );
         var $caller = $( caller );
         confirmField = rules[position+1];
 
@@ -481,12 +521,12 @@
           $.validationEngine.isError = true;
           promptText += $.validationEngine.settings.allrules['confirm'].alertText+'<br />';
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
 
      // Validate Value Length
       function _length( caller , rules , position ){
-//      console.groupCollapsed( "_length( %o , %o , %s )" , caller , rules , position );
+;;;     //console.groupCollapsed( "_length( %o , %o , %s )" , caller , rules , position );
         startLength = eval( rules[position+1] );
         endLength = eval( rules[position+2] );
         fieldLength = $( caller ).val().length;
@@ -497,12 +537,12 @@
                         $.validationEngine.settings.allrules['length'].alertText2+' '+endLength+' '+
                         $.validationEngine.settings.allrules['length'].alertText3+'<br />';
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
 
      // Validate Checkbox (Maximum Number of Checked Elements)
       function _maxCheckbox( caller , rules , position ){
-//      console.groupCollapsed( "_maxCheckbox( %o , %o , %s )" , caller , rules , position );
+;;;     //console.groupCollapsed( "_maxCheckbox( %o , %o , %s )" , caller , rules , position );
         nbCheck = eval( rules[position+1] );
         groupSize = $( 'input[name="'+( $( caller ).attr( 'name' ) )+'"]:checked' ).size();
 
@@ -512,32 +552,33 @@
           promptText += $.validationEngine.settings.allrules['maxCheckbox'].alertText+' '+nbCheck+' '+
                         $.validationEngine.settings.allrules['maxCheckbox'].alertText2+'<br />';
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
 
      // Validate Checkbox (Minimum Number of Checked Elements)
       function _minCheckbox( caller , rules , position ){
-//      console.groupCollapsed( "_minCheckbox( %o , %o , %s )" , caller , rules , position );
+;;;     //console.groupCollapsed( "_minCheckbox( %o , %o , %s )" , caller , rules , position );
         nbCheck = eval( rules[position+1] );
         groupSize = $( 'input[name="'+$( caller ).attr( 'name' )+'"]:checked' ).size();
-//        console.log( 'nbCheck = %s, groupSize = %s' , nbCheck , groupSize );
+;;;     //console.log( 'nbCheck = %s, groupSize = %s' , nbCheck , groupSize );
         if( groupSize<nbCheck ){
-//        console.log( 'Insufficient Checkboxes Detected' );
+;;;       //console.log( 'Insufficient Checkboxes Detected' );
           $.validationEngine.isError = true;
           $.validationEngine.showTriangle = false;
           promptText += $.validationEngine.settings.allrules['minCheckbox'].alertText+' '+nbCheck+' '+
                         $.validationEngine.settings.allrules['minCheckbox'].alertText2+'<br />';
         }else{
-//        console.log( 'Sufficient Checkboxes Detected' );
+;;;       //console.log( 'Sufficient Checkboxes Detected' );
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
       }
-//      console.groupEnd();
+
+;;;   //console.groupEnd();
       return ( $.validationEngine.isError ? $.validationEngine.isError : false );
     } ,
 
     submitForm : function( caller ){
-//    console.groupCollapsed( "submitForm( %o )" , caller );
+;;;   //console.groupCollapsed( "submitForm( %o )" , caller );
       var $caller = $( caller );
 
       if( $.validationEngine.settings.ajaxSubmit ){
@@ -566,7 +607,7 @@
                   if( $.validationEngine.settings.success ){
                    // AJAX success, stop the Location Update
                     $.validationEngine.settings.success && $.validationEngine.settings.success();
-//                  console.groupEnd();
+;;;                 //console.groupEnd();
                     return false;
                   }
                 } );
@@ -585,7 +626,7 @@
             }
           }
         } );
-//        console.groupEnd();
+;;;     //console.groupEnd();
         return true;
       }
 
@@ -596,19 +637,19 @@
           if( $.validationEngine.settings.unbindEngine )
             $caller.unbind( 'submit' );
           $.validationEngine.settings.success && $.validationEngine.settings.success();
-//        console.groupEnd();
+;;;       //console.groupEnd();
           return true;
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
         return false;
       }
-//      console.groupEnd();
+;;;   //console.groupEnd();
       return true;
     } ,
 
    // Error Prompt - Creation amd Display when an Error Occurs
     buildPrompt : function( caller , promptText , type , ajaxed , fieldLink ){
-//    console.groupCollapsed( "buildPrompt( %o , %s , %s , %s , %s )" , caller , promptText , type , ajaxed , fieldLink );
+;;;   //console.groupCollapsed( "buildPrompt( %o , %s , %s , %s , %s )" , caller , promptText , type , ajaxed , fieldLink );
       var $caller = $( caller );
       linkTofield = ( fieldLink || '.'+$.validationEngine.linkTofield( caller ) ).replace( /^\./ , '' );
       var topPositionAdjust = 0;
@@ -626,7 +667,8 @@
         .toggleClass( 'greenPopup' , type=='pass' )
         .toggleClass( 'blackPopup' , type=='load' )
         .toggleClass( 'ajaxed'     , ajaxed )
-        .addClass( linkTofield );
+        .addClass( linkTofield )
+        .attr( 'parentelementid'   , $caller.attr( 'id' ) );
 
      // Is the form contained in an overflown container?
       if( $.validationEngine.settings.containerOverflow ){
@@ -682,13 +724,13 @@
 
      // Add Attribute to Field, specifying the Form Error Element
       $caller.attr( 'formerrorclass' , linkTofield );
-//      console.groupEnd();
+;;;   //console.groupEnd();
       return $divFormError.animate( { 'opacity' : 0.87 } , function(){ return true; } );
     } ,
 
    // Error Box already Displayed - Update the Error Message
     updatePromptText : function( caller , promptText , type , ajaxed , fieldLink ){
-//    console.groupCollapsed( "updatePromptText( %o , %s , %s , %s )" , caller , promptText , type , ajaxed );
+;;;   //console.groupCollapsed( "updatePromptText( %o , %s , %s , %s )" , caller , promptText , type , ajaxed );
       var updateThisPrompt = fieldLink || '.'+$.validationEngine.linkTofield( caller );
 
       $updateThisPrompt = $( updateThisPrompt )
@@ -717,11 +759,11 @@
       $updateThisPrompt.animate( {
         'top'       : calculatedPosition.callerTopPosition+'px'
       } );
-//    console.groupEnd();
+;;;   //console.groupEnd();
     } ,
 
     calculatePosition : function( caller , promptText , type , ajaxed , divFormError ){
-//    console.groupCollapsed( "calculatePosition( %o , %s , %s , %s , %o )" , caller , promptText , type , ajaxed , divFormError );
+;;;   //console.groupCollapsed( "calculatePosition( %o , %s , %s , %s , %o )" , caller , promptText , type , ajaxed , divFormError );
       var $caller = $( caller );
       callerWidth = $caller.width();
       callerHeight = $caller.height();
@@ -733,6 +775,7 @@
         callerleftPosition = 0;
         var marginTopSize = "-"+inputHeight; // compensation for the triangle
       }else{
+        //console.log( '$caller.offset() = %o' , $caller.offset() );
         callerTopPosition = $caller.offset().top;
         callerleftPosition = $caller.offset().left;
         var marginTopSize = 0;
@@ -760,30 +803,35 @@
           callerTopPosition += callerHeight +5;
           break;
       }
-//      console.groupEnd();
-      return {
+      var returnVal = {
         'callerTopPosition'  : callerTopPosition ,
         'callerleftPosition' : callerleftPosition ,
         'marginTopSize'      : marginTopSize
       };
+      
+      //console.log( 'Returning Results of: %o' , returnVal );
+;;;   //console.groupEnd();
+      return returnVal;
     } ,
 
     linkTofield : function( caller ){
-//    console.groupCollapsed( "linkTofield( %o )" , caller );
-//    console.groupEnd();
-      return ( $( caller ).attr( 'id' )+'formError' ).replace( /\[|\]/g , '' );
+;;;   //console.groupCollapsed( "linkTofield( %o )" , caller );
+      var formErrorLink = ( $( caller ).attr( 'id' )+'formError' ).replace( /\[|\]/g , '' );
+      //console.log( 'Returning "%s"' , formErrorLink );
+;;;   //console.groupEnd();
+      return formErrorLink;
     } ,
 
    // Close Prompt when Error Corrected
     closePrompt : function( caller , outside ){
-//    console.groupCollapsed( "closePrompt( %o , %s )" , caller , outside );
+;;;   //console.groupCollapsed( "closePrompt( %o , %s )" , caller , outside );
       if( !$.validationEngine.settings )
         $.validationEngine.defaultSetting();
       if( outside ){
         $( caller ).fadeOut( 'fast' , function(){
           $( this ).remove();
         } );
-//      console.groupEnd();
+;;;     //console.groupEnd();
         return false;
       }
       if( typeof( ajaxValidate )=='undefined' )
@@ -794,7 +842,7 @@
           $( this ).remove();
         } );
       }
-//    console.groupEnd();
+;;;   //console.groupEnd();
     } ,
 
     debug : function( error ){
@@ -806,7 +854,7 @@
 
    // FORM SUBMIT VALIDATION LOOPING INLINE VALIDATION
     submitValidation : function( caller ){
-//    console.groupCollapsed( 'submitValidation( %o )' , caller );
+;;;   //console.groupCollapsed( 'submitValidation( %o )' , caller );
       var $caller = $( caller );
       var stopForm = false;
       $.validationEngine.ajaxValid = true;
@@ -814,18 +862,26 @@
       $caller.find( '[class*="validate["]' ).each( function(){
         if( $( this ).is( ':disabled, :hidden' ) )
           return true;
+       // If there is No ID attached to this field, create a new, hopefully unique, one.
+        if( !$( this ).attr( 'id' ) ){
+          var newID = 'validationEngine_'+( new Date ).getTime()+( Math.random()+'' ).replace( '0.' , '' );
+          $( this ).attr( 'id' , newID );
+          //console.log( 'Element had No ID. New ID = "%s"' , newID );
+        }else{
+          //console.log( 'Element ID is "%s"' , $( this ).attr( 'id' ) );
+        }
         linkTofield = $.validationEngine.linkTofield( this );
         if( !$( '.'+linkTofield+'.ajaxed' ).length ){
          // DO NOT UPDATE ALREADY AJAXED FIELDS (only happen if no normal errors, don't worry)
-          var validationPass = $.validationEngine.loadValidation( this );
-//        console.groupEnd();
+          var validationPass = $.validationEngine.getValidationRules( this );
+;;;       //console.groupEnd();
           return ( validationPass ? stopForm = true : '' );
         }
       } );
      // LOOK IF SOME AJAX IS NOT VALIDATE
       ajaxErrorLength = $.validationEngine.ajaxValidArray.length;
       for( x=0 ; x<ajaxErrorLength ; x++ ){
-        if( $.validationEngine.ajaxValidArray[x][1]==false)
+        if( $.validationEngine.ajaxValidArray[x][1]==false )
           $.validationEngine.ajaxValid = false;
       }
      // GET IF THERE IS AN ERROR OR NOT FROM THIS VALIDATION FUNCTIONS
@@ -850,10 +906,10 @@
               .animate( { scrollTop : destination } , 1100 );
           }
         }
-//      console.groupEnd();
+;;;     //console.groupEnd();
         return true;
       }
-//    console.groupEnd();
+;;;   //console.groupEnd();
       return false;
     }
 
