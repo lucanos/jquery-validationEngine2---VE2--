@@ -84,6 +84,34 @@
             }
 ;;;         //console.groupEnd();
           } );
+        //console.log( 'Binding (Live) Action to All Inputs, for when an Error has been Generated and the Field is Revisited
+        $this.find( '[class*="validate"][formerrorclass]' )
+          .live( 'focus' , function(){
+;;;         //console.groupCollapsed( '%o.focus()' , caller );
+;;;         //console.log( 'Previously Errored Field has been Focused - Partially Fade the Error Message' );
+            var $field = $( this );
+            $( '.'+$field.attr( 'formerrorclass' ) )
+              .fadeTo( 'slow' , 0.67 );
+;;;         //console.groupEnd();
+          } )
+          .live( 'blur' , function(){
+;;;         //console.groupCollapsed( '%o.blur()' , caller );
+;;;         //console.log( 'Previously Errored Field has been Unfocused - Restore the Error Message to Normal Opacity' );
+            var $field = $( this );
+            $( '.'+$field.attr( 'formerrorclass' ) )
+              .fadeTo( 'fast' , 0.87 );
+;;;         //console.groupEnd();
+          } )
+          .live( 'keyup' , function(){
+            caller = $( this );
+;;;         //console.groupCollapsed( '%o.keyup()' , caller );
+;;;         //console.log( 'Performing Re-Validation' );
+            _inlineEvent( caller );
+;;;         //console.log( 'Re-Fading the Error Message' );
+            $( '.'+caller.attr( 'formerrorclass' ) )
+              .css( 'opacity' , 0.67 );
+;;;         //console.groupEnd();
+          } );
         firstvalid = false;
       }else{
 ;;;     //console.log( 'Executed as a "returnIsValid" request' );
@@ -671,11 +699,15 @@
         .attr( 'parentelementid'   , $caller.attr( 'id' ) );
 
      // Is the form contained in an overflown container?
+      /*
       if( $.validationEngine.settings.containerOverflow ){
-        $( caller ).before( $divFormError );
+      */
+        $( caller ).after( $divFormError );
+      /*
       }else{
         $( 'body' ).append( $divFormError );
       }
+      */
 
       var $formErrorContent = $( '<div class="formErrorContent"></div>' )
         .html( promptText );
@@ -688,7 +720,7 @@
         var arrowHTML = '';
         if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) ){
           $arrow
-            .addClass( 'formErrorArrowBottom' )
+            .addClass( 'formErrorArrowUp' )
           for( l=1 ; l<11 ; l++ )
             arrowHTML += '<div class="line'+l+'"><!-- --></div>';
           topPositionAdjust = -11;
@@ -709,18 +741,14 @@
           topPositionAdjust = 8;
       }
 
-      var calculatedPosition = $.validationEngine.calculatePosition( caller , promptText , type , ajaxed , $divFormError );
+      var calculatedPosition = $.validationEngine.calculatePosition( caller , $divFormError );
 
-      calculatedPosition.callerTopPosition += topPositionAdjust;
-      $divFormError.css({
-        'z-index'   : (5000-calculatedPosition.callerTopPosition) ,
-        'top'       : calculatedPosition.callerTopPosition+'px' ,
-        'left'      : calculatedPosition.callerleftPosition+'px' ,
-        'marginTop' : calculatedPosition.marginTopSize+'px' ,
-        'opacity'   : 0
-      });
+      calculatedPosition['top'] = ( parseInt( calculatedPosition['top'] ) + topPositionAdjust )+ 'px';
+      $divFormError
+        .css( 'opacity' , 0 )
+        .css( calculatedPosition );
       $divFormError.find('.formErrorArrow')
-        .css( 'z-index' , ( 5000-calculatedPosition.callerTopPosition+1 ) );
+        .css( 'z-index' , calculatedPosition['z-index']+1 );
 
      // Add Attribute to Field, specifying the Form Error Element
       $caller.attr( 'formerrorclass' , linkTofield );
@@ -753,60 +781,58 @@
           topPositionAdjust = 8;
       }
 
-      var calculatedPosition = $.validationEngine.calculatePosition( caller , promptText , type , ajaxed , updateThisPrompt );
+      var calculatedPosition = $.validationEngine.calculatePosition( caller , updateThisPrompt );
 
-      calculatedPosition.callerTopPosition += topPositionAdjust;
       $updateThisPrompt.animate( {
-        'top'       : calculatedPosition.callerTopPosition+'px'
+        'top'       : ( parseInt( calculatedPosition['top'] ) + topPositionAdjust )+'px'
       } );
 ;;;   //console.groupEnd();
     } ,
 
-    calculatePosition : function( caller , promptText , type , ajaxed , divFormError ){
-;;;   //console.groupCollapsed( "calculatePosition( %o , %s , %s , %s , %o )" , caller , promptText , type , ajaxed , divFormError );
-      var $caller = $( caller );
-      callerWidth = $caller.width();
-      callerHeight = $caller.height();
-      inputHeight = $( divFormError ).height();
-
-     // Is the form contained in an overflown container?
-      if( $.validationEngine.settings.containerOverflow ){
-        callerTopPosition = 0;
-        callerleftPosition = 0;
-        var marginTopSize = "-"+inputHeight; // compensation for the triangle
-      }else{
-        //console.log( '$caller.offset() = %o' , $caller.offset() );
-        callerTopPosition = $caller.offset().top;
-        callerleftPosition = $caller.offset().left;
-        var marginTopSize = 0;
-      }
+    calculatePosition : function( field , errorMessage ){
+;;;   //console.groupCollapsed( "calculatePosition( %o , %s , %s , %s , %o )" , field , promptText , type , ajaxed , errorMessage );
+      var $field = $( field );
+      var $parent = $field.parent().css( 'position' , 'relative' );
+      fieldWidth = $field.width();
+      fieldHeight = $field.height();
+;;;   //console.log( 'Field : H %s , W %s' , fieldHeight , fieldWidth );
+      fieldOffsetTop = ( $field.offset().top - $parent.offset().top );
+      fieldOffsetLeft = ( $field.offset().left - $parent.offset().left );
+;;;   //console.log( 'Field Offset : T %s , L %s' , fieldOffsetTop , fieldOffsetLeft );
+      var $errorMessage = $( errorMessage );
+      messageHeight = $errorMessage.height();
+;;;   //console.log( 'Height of Error Message : %s' , messageHeight );
 
      /* POSITIONING */
+     /* Default Position - Over the top of the Field */
+      fieldTopPosition  = fieldOffsetTop;
+      fieldLeftPosition = fieldOffsetLeft;
+      var marginTopSize = 0;
+     /* Adjust Position based on settings.promptPosition */
       switch( $.validationEngine.settings.promptPosition ){
         case 'topRight' :
-          callerleftPosition +=  callerWidth -30;
-         // Is the form contained in an overflown container?
-          if( !$.validationEngine.settings.containerOverflow )
-            callerTopPosition += -inputHeight;
+          fieldTopPosition  += -messageHeight -10;
+          fieldLeftPosition +=  fieldWidth -30;
           break;
         case 'topLeft' :
-          callerTopPosition += -inputHeight -10;
           break;
         case 'centerRight' :
-          callerleftPosition += callerWidth +13;
+          fieldLeftPosition += fieldLeftPosition + fieldWidth +13;
           break;
         case 'bottomLeft' :
-          callerTopPosition = callerTopPosition + callerHeight +15;
+          fieldTopPosition = fieldTopPosition + fieldHeight +15;
           break;
         case 'bottomRight' :
-          callerleftPosition += callerWidth -30;
-          callerTopPosition += callerHeight +5;
+          //console.log( 'case bottomRight = %s' , fieldTopPosition );
+          fieldLeftPosition += fieldLeftPosition + fieldWidth -30;
+          fieldTopPosition  += fieldTopPosition + fieldHeight +5;
           break;
       }
       var returnVal = {
-        'callerTopPosition'  : callerTopPosition ,
-        'callerleftPosition' : callerleftPosition ,
-        'marginTopSize'      : marginTopSize
+        'z-index'    : ( 10000 - fieldTopPosition ) ,
+        'top'        : fieldTopPosition+'px' ,
+        'left'       : fieldLeftPosition+'px' ,
+        'margin-top' : marginTopSize+'px'
       };
       
       //console.log( 'Returning Results of: %o' , returnVal );

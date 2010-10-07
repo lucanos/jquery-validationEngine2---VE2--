@@ -1,11 +1,14 @@
 .formError {
-  position:absolute;
-  top:-300px;
-  left:-300px;
+  position:absolute !important;
+  top:0;
+  left:0;
   display:block;
   z-index:5000;
   cursor:pointer;
   overflow:visible;
+}
+.formError , .formError * {
+  float:none !important;
 }
 
 .ajaxSubmit {
@@ -29,60 +32,59 @@
   margin-top:8px;
 }
 .greenPopup .formErrorContent {
-  background:#33be40;
+  background:#33BE40;
 }
 .blackPopup .formErrorContent {
-  background:#393939;
-  color:#FFF;
+  background:#393939;color:#FFF;
 }
 
 .formError .formErrorArrow {
-  position:relative;
-  bottom:2px;
-  left:20px;
-  width:15px;
-  height:15px;
-  z-index:5001;
+  position:relative !important;
+  bottom:2px !important;
+  left:20px !important;
+  width:19px !important;
+  height:15px !important;
+  z-index:5001 !important;
+  margin:0 !important;
+  padding:0 !important;
 }
-.formError .formErrorArrowBottom {
-  top:-6px;
-  bottom:auto;
-  margin:0;
-  position:absolute;
-  
-  top:0px;
+.formError .formErrorArrowUp {
+  bottom:auto !important;
+  margin:0 !important;
+  position:absolute !important;
+  top:0px !important;
 }
 
 .formError .formErrorArrow div {
-  border-left:2px solid #DDD;
-  border-right:2px solid #DDD;
-  box-shadow:0 2px 3px #444;-moz-box-shadow:0 2px 3px #444;-webkit-box-shadow:0 2px 3px #444;
-  font-size:0;
-  height:1px;
-  background:#EE0101;
-  margin:0 auto;
-  line-height:0px;
-  font-size:0px;
-  display:block;
+  border-color:#DDD !important;
+  border-style:solid !important;
+  border-width:0 2px 0 2px !important;
+  box-shadow:0 2px 3px #444 !important;-moz-box-shadow:0 2px 3px #444 !important;-webkit-box-shadow:0 2px 3px #444 !important;
+  font-size:0 !important;
+  height:1px !important;
+  background:#EE0101 !important;
+  margin:0 auto 0 auto!important;
+  padding:none !important;
+  line-height:0px !important;
+  display:block !important;
 }
-.formError .formErrorArrowBottom div {
-  box-shadow: none;-moz-box-shadow: none;-webkit-box-shadow: none;
+.formError .formErrorArrowUp div {
+  box-shadow:none !important;-moz-box-shadow:none !important;-webkit-box-shadow:none !important;
 }
 
-.greenPopup .formErrorArrow div { background:#33BE40; }
-.blackPopup .formErrorArrow div { background:#393939;color:#FFF; }
+.greenPopup .formErrorArrow div { background:#33BE40 !important; }
+.blackPopup .formErrorArrow div { background:#393939 !important;color:#FFF !important; }
 
-.formError .formErrorArrow .line10 { width:15px;border:none; }
-.formError .formErrorArrow .line9  { width:13px;border:none; }
-.formError .formErrorArrow .line8  { width:11px; }
-.formError .formErrorArrow .line7  { width:9px; }
-.formError .formErrorArrow .line6  { width:7px; }
-.formError .formErrorArrow .line5  { width:5px; }
-.formError .formErrorArrow .line4  { width:3px; }
-.formError .formErrorArrow .line3  { width:1px;border-left:2px solid #DDD;border-right:2px solid #DDD;border-bottom:0px solid #DDD; }
-.formError .formErrorArrow .line2  { width:3px;border:none;background:#DDD; }
-.formError .formErrorArrow .line1  { width:1px;border:none;background:#DDD; }
-
+.formError .formErrorArrow .line10 { width:15px !important;border:none !important; }
+.formError .formErrorArrow .line9  { width:13px !important;border:none !important; }
+.formError .formErrorArrow .line8  { width:11px !important; }
+.formError .formErrorArrow .line7  { width:9px !important; }
+.formError .formErrorArrow .line6  { width:7px !important; }
+.formError .formErrorArrow .line5  { width:5px !important; }
+.formError .formErrorArrow .line4  { width:3px !important; }
+.formError .formErrorArrow .line3  { width:1px !important; }
+.formError .formErrorArrow .line2  { width:3px !important;border:none !important;background:#DDD !important; }
+.formError .formErrorArrow .line1  { width:1px !important;border:none !important;background:#DDD !important; }
 
 #debugMode {
   background:#000;
