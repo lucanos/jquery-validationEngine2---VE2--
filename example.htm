@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>jQuery Plugin : validationEngine [VE2]</title>
+<style type="text/css">
+
+/* Meyer CSS Reset */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td { margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
+body { line-height: 1 }
+ol, ul { list-style: none }
+blockquote, q { quotes: none }
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+:focus { outline: 0 }
+ins { text-decoration: none }
+del { text-decoration: line-through }
+table { border-collapse: collapse; border-spacing: 0; }
+/* Meyer CSS Reset - END */
+
+
+body{ font:small Helvetica;background-color:#eee; }
+code{ white-space:pre; }
+p{ margin:8px 0; }
+h1{ font-size:2em;margin:0.4em 0; }
+h2{ font-size:1.7em;margin:0.34em 0; }
+h3{ font-size:1.3em;margin:0.26em 0; }
+h4{ font-size:1.1em;margin:0.22em 0; }
+
+
+.wrapper{ margin:20px 150px;padding:10px 20px;min-width:400px;background-color:#f6f6f6;border:1px solid #CCC; }
+
+.description { background-color:#fcfcfc;border:1px solid #ddd;padding:0 10px; }
+.example{ background-color:#eee;border:1px solid #ccc;padding:5px;margin-bottom:10px; }
+
+div.sandbox , code{ display:block;padding:22px 10px 10px 10px;margin:6px 0 0 15px;-moz-border-radius-bottomleft:10px;-webkit-border-radius-bottomleft:10px;border-radius-bottomleft:10px; }
+div.sandbox span , code span{ display:block;float:left;color:#FFF;margin:-22px 0 0 -10px;padding:2px 4px;font-size:9px;text-transform:uppercase;font-family:Helvetica;-moz-border-radius-bottomright:5px;-webkit-border-radius-bottomright:5px;border-radius-bottomright:5px; }
+.sandbox{ background-color:#FFC;border:1px solid #AA3; }
+  div.sandbox span{ background-color:#AA3; }
+.markup{ background-color:#CFC;border:1px solid #393; }
+  code.markup span{ background-color:#393; }
+.jscript{ background-color:#CCF;border:1px solid #339; }
+  code.jscript span{ background-color:#339; }
+</style>
+<link rel="stylesheet" href="css/validationEngine.jquery.css" type="text/css" />
+<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/jquery.validationEngine-en.js"></script>
+<script type="text/javascript" src="js/jquery.validationEngine.js"></script>
+</head>
+
+<body>
+
+<!-- GitHub Ribbon //-->
+<a href="http://github.com/lucanos/jquery-validationEngine2---VE2--"><img style="position:absolute;top:0;right:0;border:0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub" /></a>
+<!-- GitHub Ribbon - END //-->
+
+<div class="wrapper">
+
+  <h1>jQuery Plugin : validationEngine [VE2]</h1>
+
+  <h2>Description</h2>
+    
+  <div class="description">
+    <p>One of the greatest challenges for anyone who builds, owns or manages a website, especially one which
+      allows users to interact with it using forms, is ensuring that the user enters the right data in the
+      right fields.</p>
+    <p>Users, at the same time, suffer when the validation of their submissions are all done server-side
+      (where there is a longer round-trip delay), where the error messages are not displayed in context,
+      or where the errors are obscure, confusing, or otherwise frustrating.</p>
+    <p>This plugin, and those which are it's ancestors - validationEngine by JOE and validationEngine2 by jk,
+      allow for the client-side validation of form data with error messages displayed alongside the fields in
+      question. It allows for basic validation checks (non-empty fields), regular expression matches, AJAX
+      validations, custom functions, etc. And, whatever it doesn't already have can always be added, either
+      by contacting me, or by forking the plugin at GitHub.</p>
+  </div>
+
+  <h2>Usage</h2>
+
+  <div id="usage">
+
+    <div class="example">
+      <h3>Required Field</h3>
+      <p>An error message will be displayed if the user moves from the field without entering any value.</p>
+      <div class="sandbox">
+        <span>Sandbox</span>
+        <form id="example1">
+          <label>This is a Required Field: <input name="field1" class="validate[required]" /></label>
+        </form>
+        <script type="text/javascript">
+        $(document).ready(function(){
+          $('#example1').validationEngine({
+            promptPosition : 'bottomLeft'
+          });
+        });
+        </script>
+      </div>
+      <code class="markup"><span>HTML</span>&lt;form id="example1"&gt;
+  &lt;label&gt;This is a Required Field: &lt;input name="field1" class="validate[required]" /&gt;&lt;/label&gt;
+&lt;/form&gt;</code>
+      <code class="jscript"><span>Javascript</span>$(document).ready(function(){
+  $('#example1').validationEngine({
+    promptPosition : 'bottomLeft'
+  });
+});</code>
+    </div>
+    <div class="example">
+      <h3>Specified Length</h3>
+      <p>Example description</p>
+      <div class="sandbox">
+        <span>Sandbox</span>
+        <form id="example2">
+          <label>This Field needs a value of 3 to 20 characters: <input name="field2" class="validate[length[3,20]]" /></label>
+        </form>
+        <script type="text/javascript">
+        $(document).ready(function(){
+          $('#example2').validationEngine({
+            promptPosition : 'bottomRight'
+          });
+        });
+        </script>
+      </div>
+      <code class="markup"><span>HTML</span>&lt;form id="example2"&gt;
+  &lt;label&gt;This is a Required Field: &lt;input name="field2" class="validate[length[3,20]]" /&gt;&lt;/label&gt;
+&lt;/form&gt;</code>
+      <code class="jscript"><span>Javascript</span>$(document).ready(function(){
+  $('#example2').validationEngine({
+    promptPosition : 'bottomRight'
+  });
+});</code>
+    </div>
+    <div class="example">
+      <h3>Character Filtering</h3>
+      <p>Example description</p>
+      <div class="sandbox"><span>Sandbox</span>
+        <form id="example3">
+          <label>This Field wants input which is only letters: <input name="field3" class="validate[custom[onlyLetter]]" /></label>
+        </form>
+        <script type="text/javascript">
+        $(document).ready(function(){
+          $('#example3').validationEngine({
+            promptPosition : 'topLeft'
+          });
+        });
+        </script></div>
+      <code class="markup"><span>HTML</span>This is where the escaped HTML code is
+New line</code>
+      <code class="jscript"><span>Javascript</span>This is where the escaped Javascript code is</code>
+    </div>
+    <div class="example">
+      <h3>Example Title #3</h3>
+      <p>Example description</p>
+      <div class="sandbox"><span>Sandbox</span>This is where the actual active code is</div>
+      <code class="markup"><span>HTML</span>This is where the escaped HTML code is
+New line</code>
+      <code class="jscript"><span>Javascript</span>This is where the escaped Javascript code is</code>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
