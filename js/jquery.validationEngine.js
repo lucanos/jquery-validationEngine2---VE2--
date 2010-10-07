@@ -815,17 +815,18 @@
           fieldLeftPosition +=  fieldWidth -30;
           break;
         case 'topLeft' :
+          fieldTopPosition  += -messageHeight -10;
           break;
         case 'centerRight' :
-          fieldLeftPosition += fieldLeftPosition + fieldWidth +13;
+          fieldLeftPosition += fieldWidth +13;
           break;
         case 'bottomLeft' :
-          fieldTopPosition = fieldTopPosition + fieldHeight +15;
+          fieldTopPosition  += fieldHeight +15;
           break;
         case 'bottomRight' :
           //console.log( 'case bottomRight = %s' , fieldTopPosition );
-          fieldLeftPosition += fieldLeftPosition + fieldWidth -30;
-          fieldTopPosition  += fieldTopPosition + fieldHeight +5;
+          fieldLeftPosition += fieldWidth -30;
+          fieldTopPosition  += fieldHeight +15;
           break;
       }
       var returnVal = {
