@@ -7,19 +7,19 @@
 <style type="text/css">
 
 /* Meyer CSS Reset */
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td { margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent; }
-body { line-height: 1 }
-ol, ul { list-style: none }
-blockquote, q { quotes: none }
-blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td { margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent;}
+body { line-height:1; }
+ol,ul { list-style:none; }
+blockquote,q { quotes:none; }
+blockquote:before,blockquote:after,q:before,q:after { content:'';content:none; }
 :focus { outline: 0 }
-ins { text-decoration: none }
-del { text-decoration: line-through }
-table { border-collapse: collapse; border-spacing: 0; }
+ins { text-decoration:none; }
+del { text-decoration:line-through; }
+table { border-collapse:collapse;border-spacing:0; }
 /* Meyer CSS Reset - END */
 
 
-body{ font:small Helvetica;background-color:#eee; }
+body{ font-family:Helvetica;font-size:87.5%;background-color:#eee; }
 code{ white-space:pre; }
 p{ margin:8px 0; }
 h1{ font-size:2em;margin:0.4em 0; }
@@ -142,9 +142,14 @@ div.sandbox span , code span{ display:block;float:left;color:#FFF;margin:-22px 0
           });
         });
         </script></div>
-      <code class="markup"><span>HTML</span>This is where the escaped HTML code is
-New line</code>
-      <code class="jscript"><span>Javascript</span>This is where the escaped Javascript code is</code>
+      <code class="markup"><span>HTML</span>&lt;form id="example3"&gt;
+          &lt;label&gt;This Field wants input which is only letters: &lt;input name="field3" class="validate[custom[onlyLetter]]" /&gt;&lt;/label&gt;
+        &lt;/form&gt;</code>
+      <code class="jscript"><span>Javascript</span>$(document).ready(function(){
+  $('#example3').validationEngine({
+    promptPosition : 'topLeft'
+  });
+});</code>
     </div>
     <div class="example">
       <h3>Example Title #3</h3>

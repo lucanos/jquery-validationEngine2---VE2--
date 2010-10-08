@@ -102,7 +102,7 @@
               .fadeTo( 'fast' , 0.87 );
 ;;;         //console.groupEnd();
           } )
-          .live( 'keyup' , function(){
+          .live( 'keyup click' , function(){
             caller = $( this );
 ;;;         //console.groupCollapsed( '%o.keyup()' , caller );
 ;;;         //console.log( 'Performing Re-Validation' );
@@ -915,11 +915,11 @@
       if( stopForm || !$.validationEngine.ajaxValid ){
         if( $.validationEngine.settings.scroll ){
           if( !$.validationEngine.settings.containerOverflow ){
-            var destination = $( '.formError:not(".greenPopup"):first' ).offset().top;
+            var destination = Math.min( ( aFormError = $( '.formError:not(".greenPopup"):first' ) ).offset().top , $( '#'+aFormError.attr( 'parentelementid' ) ).offset().top );
             $( '.formError:not(".greenPopup")' ).each( function(){
-              testDestination = $( this ).offset().top;
-              if( destination>testDestination ) destination = $( this ).offset().top;
-            })
+              destination = Math.min( destination , $( this ).offset().top , $( '#'+$( this ).attr( 'parentelementid' ) ).offset().top );
+            });
+            destination += 20; // Scroll to X above the topmost element
             $( 'html:not(:animated), body:not(:animated)' )
               .animate( { scrollTop : destination } , 1100 );
           }else{
