@@ -84,7 +84,14 @@ div.sandbox span , code span{ display:block;float:left;color:#FFF;margin:-22px 0
       <div class="sandbox">
         <span>Sandbox</span>
         <form id="example1">
-          <label>This is a Required Field: <input name="field1" class="validate[required]" /></label>
+          <label>This is a Required Field: <input name="field1" class="validate[required]" /></label><br/>
+          <label>
+            This is a Required Dropdown:
+            <select name="field2" class="validate[required]">
+              <option value="" selected="selected">Please select one... (has a value of "")</option>
+              <option>I am Juan, you want to select me?</option>
+            </select>
+          </label>
         </form>
         <script type="text/javascript">
         $(document).ready(function(){
@@ -95,7 +102,14 @@ div.sandbox span , code span{ display:block;float:left;color:#FFF;margin:-22px 0
         </script>
       </div>
       <code class="markup"><span>HTML</span>&lt;form id="example1"&gt;
-  &lt;label&gt;This is a Required Field: &lt;input name="field1" class="validate[required]" /&gt;&lt;/label&gt;
+  &lt;label&gt;This is a Required Field: &lt;input name="field1" class="validate[required]" /&gt;&lt;/label&gt;&lt;br/&gt;
+  &lt;label&gt;
+    This is a Required Dropdown:
+    &lt;select name="field2" class="validate[required]"&gt;
+      &lt;option value="" selected="selected"&gt;Please select one... (has a value of "")&lt;/option&gt;
+      &lt;option&gt;I am Juan, you want to select me?&lt;/option&gt;
+    &lt;/select&gt;
+  &lt;/label&gt;
 &lt;/form&gt;</code>
       <code class="jscript"><span>Javascript</span>$(document).ready(function(){
   $('#example1').validationEngine({

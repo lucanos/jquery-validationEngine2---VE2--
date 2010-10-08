@@ -830,7 +830,7 @@
           break;
       }
       var returnVal = {
-        'z-index'    : ( 10000 - fieldTopPosition ) ,
+        'z-index'    : ( 10000 - $field.offset().top ) ,
         'top'        : fieldTopPosition+'px' ,
         'left'       : fieldLeftPosition+'px' ,
         'margin-top' : marginTopSize+'px'
