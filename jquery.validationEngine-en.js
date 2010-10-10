@@ -14,10 +14,14 @@
           "alertTextCheckboxSingle"   : "* This checkbox is required"
         } ,
         "length" : {
-          "regex"      : "none" ,
-          "alertText"  : "* Between" ,
-          "alertText2" : "and" ,
-          "alertText3" : "characters allowed"
+          "regex"         : "none" ,
+          "alertText"     : "* Please enter a value between" ,
+          "alertText2"    : "and" ,
+          "alertText3"    : "characters in length" ,
+          "alertTextMax"  : "* Please enter a value of" ,
+          "alertTextMax2" : "or less characters" ,
+          "alertTextMin"  : "* Please enter a value of" ,
+          "alertTextMin2" : "or more characters"
         } ,
         "maxCheckbox" : {
           "regex"      : "none" ,

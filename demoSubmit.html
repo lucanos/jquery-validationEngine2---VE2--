@@ -12,21 +12,21 @@
 <script>
 $(document).ready(function() {
   // SUCCESS AJAX CALL, replace "success: false," by:     success : function() { callSuccessFunction() },
-  $("#formID").validationEngine({
-    ajaxSubmit: true,
-    ajaxSubmitFile: "validationScripts/ajaxSubmit.php",
-    ajaxSubmitMessage: "Thank you, we received your inscription!",
-    success : false,
-    failure : function() {}
+  $( '#formID' ).validationEngine({
+    ajaxSubmit        : true ,
+    ajaxSubmitFile    : 'validationScripts/ajaxSubmit.php' ,
+    ajaxSubmitMessage : 'Thank you, we received your inscription!' ,
+    success           : false ,
+    failure           : function() {}
   });
 
-  $("#formID2").validationEngine({
-    ajaxSubmit: true,
-    ajaxSubmitFile: "validationScripts/ajaxSubmit.php",
-    ajaxSubmitExtraData: "name=anything",
-    ajaxSubmitMessage: "Thank you, we received your inscription from the second form!",
-    success : false,
-    failure : function() {}
+  $( '#formID2' ).validationEngine({
+    ajaxSubmit          : true ,
+    ajaxSubmitFile      : 'validationScripts/ajaxSubmit.php' ,
+    ajaxSubmitExtraData : 'name=anything' ,
+    ajaxSubmitMessage   : 'Thank you, we received your inscription from the second form!' ,
+    success             : false ,
+    failure             : function() {}
   });
 });
 </script>

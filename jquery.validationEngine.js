@@ -555,11 +555,29 @@
      // Validate Value Length
       function _length( caller , rules , position ){
 ;;;     //console.groupCollapsed( "_length( %o , %o , %s )" , caller , rules , position );
-        startLength = eval( rules[position+1] );
-        endLength = eval( rules[position+2] );
+        startLength = ( rules[position+1]=='' ? -1 : parseInt( rules[position+1] ) );
+        endLength   = ( rules[position+2]=='' ? -1 : parseInt( rules[position+2] ) );
         fieldLength = $( caller ).val().length;
+;;;     //console.log( 'startLength = %s' , startLength );
+;;;     //console.log( 'endLength = %s' , endLength );
+;;;     //console.log( 'fieldLength = %s' , fieldLength );
 
-        if( fieldLength<startLength || fieldLength>endLength ){
+        if( startLength==-1 ){
+         // Less than or equal to X characters
+          if( fieldLength>endLength ){
+            $.validationEngine.isError = true;
+            promptText += $.validationEngine.settings.allrules['length'].alertTextMax+' '+endLength+' '+
+                          $.validationEngine.settings.allrules['length'].alertTextMax2+'<br />';
+          }
+        }else if( endLength==-1 ){
+         // More than, or equal to X characters
+          if( fieldLength<startLength ){
+            $.validationEngine.isError = true;
+            promptText += $.validationEngine.settings.allrules['length'].alertTextMin+' '+startLength+' '+
+                          $.validationEngine.settings.allrules['length'].alertTextMin2+'<br />';
+          }
+        }else if( fieldLength<startLength || fieldLength>endLength ){
+         // Between X and Y characters (inclusive)
           $.validationEngine.isError = true;
           promptText += $.validationEngine.settings.allrules['length'].alertText+' '+startLength+' '+
                         $.validationEngine.settings.allrules['length'].alertText2+' '+endLength+' '+
@@ -699,15 +717,7 @@
         .attr( 'parentelementid'   , $caller.attr( 'id' ) );
 
      // Is the form contained in an overflown container?
-      /*
-      if( $.validationEngine.settings.containerOverflow ){
-      */
-        $( caller ).after( $divFormError );
-      /*
-      }else{
-        $( 'body' ).append( $divFormError );
-      }
-      */
+      $( caller ).after( $divFormError );
 
       var $formErrorContent = $( '<div class="formErrorContent"></div>' )
         .html( promptText );
@@ -718,14 +728,14 @@
         var $arrow = $( '<div class="formErrorArrow"></div>' );
         $divFormError.append( $arrow );
         var arrowHTML = '';
-        if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) ){
+        if( /^bottom(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) ){
           $arrow
             .addClass( 'formErrorArrowUp' )
           for( l=1 ; l<11 ; l++ )
             arrowHTML += '<div class="line'+l+'"><!-- --></div>';
           topPositionAdjust = -11;
         }
-        if( /^top(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) ){
+        if( /^top(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) ){
           for( l=10 ; l>0 ; l-- )
             arrowHTML += '<div class="line'+l+'"><!-- --></div>';
           topPositionAdjust = 15;
@@ -735,9 +745,9 @@
 
       }else{
        // Adjustments for Radio Buttons and Checkboxes ONLY
-        if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+        if( /^bottom(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
           topPositionAdjust = -13;
-        if( /^top(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+        if( /^top(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
           topPositionAdjust = 8;
       }
 
@@ -769,15 +779,15 @@
           .html( promptText );
 
       if( $.validationEngine.showTriangle!=false ){
-        if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+        if( /^bottom(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
           topPositionAdjust = -11;
-        if( /^top(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+        if( /^top(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
           topPositionAdjust = 15;
       }else{
        // Adjustments for Radio Buttons and Checkboxes ONLY
-        if( /^bottom(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+        if( /^bottom(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
           topPositionAdjust = -13;
-        if( /^top(?:Lef|Righ)t$/.test( $.validationEngine.settings.promptPosition ) )
+        if( /^top(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
           topPositionAdjust = 8;
       }
 
@@ -809,10 +819,10 @@
       fieldLeftPosition = fieldOffsetLeft;
       var marginTopSize = 0;
      /* Adjust Position based on settings.promptPosition */
-      switch( $.validationEngine.settings.promptPosition ){
+      switch( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ){
         case 'topRight' :
           fieldTopPosition  += -messageHeight -10;
-          fieldLeftPosition +=  fieldWidth -30;
+          fieldLeftPosition +=  fieldWidth -35;
           break;
         case 'topLeft' :
           fieldTopPosition  += -messageHeight -10;
@@ -825,7 +835,7 @@
           break;
         case 'bottomRight' :
           //console.log( 'case bottomRight = %s' , fieldTopPosition );
-          fieldLeftPosition += fieldWidth -30;
+          fieldLeftPosition += fieldWidth -35;
           fieldTopPosition  += fieldHeight +15;
           break;
       }
