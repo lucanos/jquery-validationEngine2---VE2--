@@ -227,7 +227,7 @@
       pattern = /\[|,|\]/;
       result = str.split( pattern );
 ;;;   //console.log( 'result = "%o"' , result );
-;;;   //console.log( 'Running processFieldValidation()' );  
+;;;   //console.log( 'Running processFieldValidation()' );
 ;;;   //console.groupEnd();
       return $.validationEngine.processFieldValidation( caller , result );
     } ,
@@ -699,6 +699,7 @@
       var $caller = $( caller );
       linkTofield = ( fieldLink || '.'+$.validationEngine.linkTofield( caller ) ).replace( /^\./ , '' );
       var topPositionAdjust = 0;
+      var promptPosition = $caller.attr('errorposition') || $.validationEngine.settings.promptPosition;
 
       if( !$.validationEngine.settings )
         $.validationEngine.defaultSetting();
@@ -717,25 +718,27 @@
         .attr( 'parentelementid'   , $caller.attr( 'id' ) );
 
      // Is the form contained in an overflown container?
-      $( caller ).after( $divFormError );
+      $caller.after( $divFormError );
 
       var $formErrorContent = $( '<div class="formErrorContent"></div>' )
         .html( promptText );
+      if( promptPosition=='centerRight' )
+        $formErrorContent.css( 'margin-top' , 0 );
       $divFormError
         .append( $formErrorContent );
 
-      if( $.validationEngine.showTriangle!=false ){		// NO TRIANGLE ON MAX CHECKBOX AND RADIO
+      if( $.validationEngine.showTriangle!=false && promptPosition!='centerRight' ){ // NO TRIANGLE ON MAX CHECKBOX, RADIO and CENTER
         var $arrow = $( '<div class="formErrorArrow"></div>' );
         $divFormError.append( $arrow );
         var arrowHTML = '';
-        if( /^bottom(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) ){
+        if( /^bottom(?:Lef|Righ)t$/.test( promptPosition ) ){
           $arrow
             .addClass( 'formErrorArrowUp' )
           for( l=1 ; l<11 ; l++ )
             arrowHTML += '<div class="line'+l+'"><!-- --></div>';
           topPositionAdjust = -11;
         }
-        if( /^top(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) ){
+        if( /^top(?:Lef|Righ)t$/.test( promptPosition ) ){
           for( l=10 ; l>0 ; l-- )
             arrowHTML += '<div class="line'+l+'"><!-- --></div>';
           topPositionAdjust = 15;
@@ -745,9 +748,9 @@
 
       }else{
        // Adjustments for Radio Buttons and Checkboxes ONLY
-        if( /^bottom(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
+        if( /^bottom(?:Lef|Righ)t$/.test( promptPosition ) )
           topPositionAdjust = -13;
-        if( /^top(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
+        if( /^top(?:Lef|Righ)t$/.test( promptPosition ) )
           topPositionAdjust = 8;
       }
 
@@ -770,6 +773,7 @@
     updatePromptText : function( caller , promptText , type , ajaxed , fieldLink ){
 ;;;   //console.groupCollapsed( "updatePromptText( %o , %s , %s , %s )" , caller , promptText , type , ajaxed );
       var updateThisPrompt = fieldLink || '.'+$.validationEngine.linkTofield( caller );
+      var promptPosition = $( caller ).attr('errorposition') || $.validationEngine.settings.promptPosition;
 
       $updateThisPrompt = $( updateThisPrompt )
         .toggleClass( 'greenPopup' , type=='pass' )
@@ -778,16 +782,16 @@
         .find( '.formErrorContent' )
           .html( promptText );
 
-      if( $.validationEngine.showTriangle!=false ){
-        if( /^bottom(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
+      if( $.validationEngine.showTriangle!=false && promptPosition!='centerRight' ){
+        if( /^bottom(?:Lef|Righ)t$/.test( promptPosition ) )
           topPositionAdjust = -11;
-        if( /^top(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
+        if( /^top(?:Lef|Righ)t$/.test( promptPosition ) )
           topPositionAdjust = 15;
       }else{
        // Adjustments for Radio Buttons and Checkboxes ONLY
-        if( /^bottom(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
+        if( /^bottom(?:Lef|Righ)t$/.test( promptPosition ) )
           topPositionAdjust = -13;
-        if( /^top(?:Lef|Righ)t$/.test( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ) )
+        if( /^top(?:Lef|Righ)t$/.test( promptPosition ) )
           topPositionAdjust = 8;
       }
 
@@ -803,11 +807,12 @@
 ;;;   //console.groupCollapsed( "calculatePosition( %o , %s , %s , %s , %o )" , field , promptText , type , ajaxed , errorMessage );
       var $field = $( field );
       var $parent = $field.parent().css( 'position' , 'relative' );
+      var promptPosition = $field.attr('errorposition') || $.validationEngine.settings.promptPosition;
       fieldWidth = $field.width();
       fieldHeight = $field.height();
 ;;;   //console.log( 'Field : H %s , W %s' , fieldHeight , fieldWidth );
-      fieldOffsetTop = ( $field.offset().top - $parent.offset().top );
-      fieldOffsetLeft = ( $field.offset().left - $parent.offset().left );
+      fieldOffsetTop = Math.round( $field.offset().top - $parent.offset().top );
+      fieldOffsetLeft = Math.round( $field.offset().left - $parent.offset().left );
 ;;;   //console.log( 'Field Offset : T %s , L %s' , fieldOffsetTop , fieldOffsetLeft );
       var $errorMessage = $( errorMessage );
       messageHeight = $errorMessage.height();
@@ -819,7 +824,7 @@
       fieldLeftPosition = fieldOffsetLeft;
       var marginTopSize = 0;
      /* Adjust Position based on settings.promptPosition */
-      switch( $field.attr('errorposition') || $.validationEngine.settings.promptPosition ){
+      switch( promptPosition ){
         case 'topRight' :
           fieldTopPosition  += -messageHeight -10;
           fieldLeftPosition +=  fieldWidth -35;
@@ -829,25 +834,24 @@
           break;
         case 'centerRight' :
           fieldLeftPosition += fieldWidth +13;
-          fieldTopPosition  += -( messageHeight - fieldHeight )/2;
           break;
         case 'bottomLeft' :
           fieldTopPosition  += fieldHeight +15;
           break;
         case 'bottomRight' :
-          //console.log( 'case bottomRight = %s' , fieldTopPosition );
           fieldLeftPosition += fieldWidth -35;
           fieldTopPosition  += fieldHeight +15;
           break;
       }
+
       var returnVal = {
-        'z-index'    : ( 10000 - $field.offset().top ) ,
+        'z-index'    : Math.round( 10000 - $field.offset().top ) ,
         'top'        : fieldTopPosition+'px' ,
         'left'       : fieldLeftPosition+'px' ,
         'margin-top' : marginTopSize+'px'
       };
-      
-      //console.log( 'Returning Results of: %o' , returnVal );
+
+;;;   //console.log( 'Returning Results of: %o' , returnVal );
 ;;;   //console.groupEnd();
       return returnVal;
     } ,

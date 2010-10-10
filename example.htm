@@ -79,6 +79,75 @@ div.sandbox span , code span{ display:block;float:left;color:#FFF;margin:-22px 0
   <div id="usage">
 
     <div class="example">
+      <h3>Custom Error Messages</h3>
+      <p>The contents of the error messages, and the conditions under which they are shown, are set out in the <strong>jquery.validationEngine-en.js</strong> file.</p>
+      <p>However, under some circumstances, it may be better to show a user a single, field-specific error message regardless of what error has occurred. This is done through </p>
+      <div class="sandbox">
+        <span>Sandbox</span>
+        <form id="exampleZ">
+          <label>Enter your Username : <input name="field1" class="validate[required,length[6,12]]" errormsg="That username is not valid" /></label><br/>
+          <label>Enter your Username: <input name="field2" class="validate[required,length[6,12]]" /></label>
+        </form>
+        <script type="text/javascript">
+        $(document).ready(function(){
+          $('#exampleZ').validationEngine({
+            promptPosition : 'bottomLeft'
+          });
+        });
+        </script>
+      </div>
+      <code class="markup"><span>HTML</span>&lt;form id="example0"&gt;
+          &lt;label&gt;Top Left: &lt;input name="field1" class="validate[required]" errorposition="topLeft" /&gt;&lt;/label&gt;&lt;br/&gt;
+          &lt;label&gt;Top Right: &lt;input name="field2" class="validate[required]" errorposition="topRight" /&gt;&lt;/label&gt;&lt;br/&gt;
+          &lt;label&gt;Center Right: &lt;input name="field3" class="validate[required]" errorposition="centerRight" /&gt;&lt;/label&gt;&lt;br/&gt;
+          &lt;label&gt;Bottom Right: &lt;input name="field4" class="validate[required]" errorposition="bottomRight" /&gt;&lt;/label&gt;&lt;br/&gt;
+          &lt;label&gt;Bottom Left: &lt;input name="field5" class="validate[required]" errorposition="bottomLeft" /&gt;&lt;/label&gt;&lt;br/&gt;
+        &lt;/form&gt;</code>
+      <code class="jscript"><span>Javascript</span>$(document).ready(function(){
+  $('#example0').validationEngine({
+    returnIsValid : true
+  });
+});</code>
+    </div>
+
+    <div class="example">
+      <h3>Positioning Examples</h3>
+      <p>The error messages can be displayed in one of 5 different positions, relative to the field (or first element, in the case of checkboxes and radio buttons).</p>
+      <p>These positions can be set in the settings, when calling the validationEngine function, or can be set individually through the "errorposition" attribute within the markup of the field to be affected.</p>
+      <div class="sandbox">
+        <span>Sandbox</span>
+        <br />
+        <form id="example0">
+          <label>Top Left: <input name="field1" class="validate[required]" errorposition="topLeft" /></label><br/>
+          <label>Top Right: <input name="field2" class="validate[required]" errorposition="topRight" /></label><br/>
+          <label>Center Right: <input name="field3" class="validate[required]" errorposition="centerRight" /></label><br/>
+          <label>Bottom Right: <input name="field4" class="validate[required]" errorposition="bottomRight" /></label><br/>
+          <label>Bottom Left: <input name="field5" class="validate[required]" errorposition="bottomLeft" /></label><br/>
+        </form>
+        <br />
+        <script type="text/javascript">
+        $(document).ready(function(){
+          $('#example0').validationEngine({
+            returnIsValid : true
+          });
+        });
+        </script>
+      </div>
+      <code class="markup"><span>HTML</span>&lt;form id="example0"&gt;
+          &lt;label&gt;Top Left: &lt;input name="field1" class="validate[required]" errorposition="topLeft" /&gt;&lt;/label&gt;&lt;br/&gt;
+          &lt;label&gt;Top Right: &lt;input name="field2" class="validate[required]" errorposition="topRight" /&gt;&lt;/label&gt;&lt;br/&gt;
+          &lt;label&gt;Center Right: &lt;input name="field3" class="validate[required]" errorposition="centerRight" /&gt;&lt;/label&gt;&lt;br/&gt;
+          &lt;label&gt;Bottom Right: &lt;input name="field4" class="validate[required]" errorposition="bottomRight" /&gt;&lt;/label&gt;&lt;br/&gt;
+          &lt;label&gt;Bottom Left: &lt;input name="field5" class="validate[required]" errorposition="bottomLeft" /&gt;&lt;/label&gt;&lt;br/&gt;
+        &lt;/form&gt;</code>
+      <code class="jscript"><span>Javascript</span>$(document).ready(function(){
+  $('#example0').validationEngine({
+    returnIsValid : true
+  });
+});</code>
+    </div>
+    
+    <div class="example">
       <h3>Required Field</h3>
       <p>An error message will be displayed if the user moves from the field without entering any value.</p>
       <div class="sandbox">
