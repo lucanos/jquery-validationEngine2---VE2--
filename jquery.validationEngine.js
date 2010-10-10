@@ -829,6 +829,7 @@
           break;
         case 'centerRight' :
           fieldLeftPosition += fieldWidth +13;
+          fieldTopPosition  += -( messageHeight - fieldHeight )/2;
           break;
         case 'bottomLeft' :
           fieldTopPosition  += fieldHeight +15;
